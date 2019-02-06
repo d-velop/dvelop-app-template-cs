@@ -26,7 +26,7 @@ namespace Dvelop.Selfhosted.HostApplication
                     builder.AddEnvironmentVariables();
                 } )
                 .UseStartup<Startup>()
-                .UseUrls("https://*:5000");
+                .UseUrls("http://*:5000");
 
             var webHost = webHostBuilder.Build();
             

@@ -155,7 +155,6 @@ namespace Dvelop.Remote
                 await next.Invoke();
             });
             
-            app.UseHttpsRedirection();
             app.UseCookiePolicy();
             
             app.UseRequestLocalization(new RequestLocalizationOptions
