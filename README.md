@@ -23,6 +23,7 @@ If you use Microsoft Visual Studio you will need "ASP.NET and web development", 
 Build the image for your app's build container ([Dockerfile](./buildcontainer/Dockerfile)).
 
 ```
+cd buildcontainer
 docker build -t vacationprocess_build_deploy_cs .
 ```
 
@@ -226,7 +227,7 @@ All WebApi-Controller are stored within `Controller`.
 
 `Pages` contains an example for a Razor-Page.
 
-`Views` contains MVC-Views. The folder structure within the `Views` folder should be identical to the structure within `Controller` folder.
+`Views` contains MVC-Views. The folder structure within the `Views` folder should be identical to the structure within the `Controller` folder.
 
 `wwwroot` contains static assets. If you want to include some frontendcode like an Angular-Single-page App for instance, you will need to configure the frontend buildprocess to output the assets into this directory. All files in this folder (expect `*.html`) will be copied into the S3 bucket for your assets. The deployment process `docker-build deploy` will create a hash over all files in this directory and create a S3 prefix to enable unlimitted caching.
 
@@ -239,11 +240,19 @@ Adapter in this project are used by the AWS-lambda environment and also by the l
 
 Contains your Domain Secifc Logic and should have **no** dependencies to any environment specific library or code to ensure a high testability.
 
+### `buildcontainer`
+
+Contains the `Dockerfile`for the buildenvironment. It is kept in a seperate directory to keep the buildcontext small so that the image can be build as fast as possible.
+
+### `terraform`
+
+Contains the [terraform](https://www.terraform.io/) files.
+
 ## Contributing
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## License
 
-Please read [LICENSE.md](LICENSE.md) for licensing information.
+Please read [LICENSE](LICENSE) for licensing information.
 
