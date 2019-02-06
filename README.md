@@ -14,7 +14,9 @@ After this adjust the code to fit the purpose of your own business problem/app.
 
 A linux docker container is used for the build and deployment process of the app.
 So besides docker the only thing you need on your local development system is a 
-git client and an editor or IDE for c#.
+git client and an editor or IDE for C#.
+
+To develop a d.velop cloud app you will need to install [.NET Core SDK 2.1](https://dotnet.microsoft.com/download/dotnet-core/2.1). Newer versions of the SDK will also work, but keep in mind, that AWS Lambda will only [support LTS versions](https://github.com/aws/aws-lambda-dotnet) of `.NET Core`. 
 
 If you use Microsoft Visual Studio you will need "ASP.NET and web development", ".NET desktop development" and ".NET Core cross-platform development" workloads installed.
 
