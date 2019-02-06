@@ -1,0 +1,46 @@
+﻿@model Dvelop.Remote.Controller.BusinessValue.ViewModel.BusinessValueListView
+@{
+    Layout = "_Layout";
+}
+<div class="resource">
+    <main class="resource-content">
+        <h2>@Model.Caption</h2>
+
+
+        @foreach (var item in Model.Values)
+        {
+            <div class="item-list">
+                <article class="entry">
+                    <div class="dv-checkbox">
+                        <input type="checkbox" id="cb-1">
+                        <label for="cb-1"></label>
+                    </div>
+                    <a href="@item.DetailLink" class="item" target="dapi_navigate">
+                        <div class="icon">
+                            <div class="dv-overlay">
+                                <i class="dv dv-money text-white"></i>
+                                <i class="fas fa-circle text-wisteria"></i>
+                            </div>
+                        </div>
+                        <div class="item-details">
+                            <section class="item-lead">
+                                <div class="condition">
+                                    <ul class="states">
+                                        <li class="in-progress"></li>
+                                        <li class="validate"></li>
+                                        <li class="released"></li>
+                                        <li class="archived"></li>
+                                        <li></li>
+                                    </ul>
+                                </div>
+                                <div class="item-sort">@item.Value</div>
+                            </section>
+                            <h1>@item.Caption</h1>
+                        </div>
+                    </a>
+                </article>
+
+            </div>
+        }
+    </main>
+</div>

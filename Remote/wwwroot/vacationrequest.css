@@ -1,0 +1,19 @@
+.mdc-text-field,
+.mdc-select {
+    display: flex;
+}
+
+.dmc-form__actions {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 16px;
+}
+
+textarea {
+    resize: none;
+}
+
+[data-mode="show"] #submit {
+    visibility: hidden;
+}
+

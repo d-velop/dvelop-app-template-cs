@@ -1,0 +1,70 @@
+﻿@model Dvelop.Remote.Controller.VacationRequest.ViewModel.VacationRequestView
+@{
+    Layout = "_Layout";
+}
+<form action="./vacationrequest/" method="post" id="form" class="mdc-layout-grid">
+    <div class="mdc-layout-grid__inner">
+        <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+            <h1 class="mdc-typography--headline5">Vacation request</h1>
+        </div>
+        <div class="mdc-layout-grid__cell">
+            <div class="mdc-text-field mdc-text-field--with-leading-icon">
+                <i class="material-icons mdc-text-field__icon">event</i>
+                <input name="from" type="date" id="from" class="mdc-text-field__input"
+                       aria-controls="from-helper-text"
+                       aria-describedby="from-helper-text"
+                       value="@Model.From">
+                <label for="from" class="mdc-floating-label">From</label>
+                <div class="mdc-line-ripple"></div>
+            </div>
+        </div>
+        <div class="mdc-layout-grid__cell">
+            <div class="mdc-text-field mdc-text-field--with-leading-icon">
+                <i class="material-icons mdc-text-field__icon">event</i>
+                <input name="to" type="date" id="to" class="mdc-text-field__input"
+                       aria-controls="to-helper-text"
+                       aria-describedby="to-helper-text"
+                       value="@Model.To">
+                <label for="to" class="mdc-floating-label">To</label>
+                <div class="mdc-line-ripple"></div>
+            </div>
+        </div>
+        <div class="mdc-layout-grid__cell">
+            <div class="mdc-select">
+                <i class="mdc-select__dropdown-icon"></i>
+                <select name="type" id="type" class="mdc-select__native-control">
+                    <option value="Annual" selected>Annual leave</option>
+                    <option value="Special">Special leave</option>
+                    <option value="Compensatory">Compensatory time off</option>
+                </select>
+                <label for="type" class="mdc-floating-label mdc-floating-label--float-above">Type</label>
+                <div class="mdc-line-ripple"></div>
+            </div>
+        </div>
+
+        <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+            <div class="mdc-text-field mdc-text-field--textarea">
+                <textarea name="comment" id="comment" class="mdc-text-field__input" rows="5" cols="40">@Model.Comment</textarea>
+                <div class="mdc-notched-outline">
+                    <div class="mdc-notched-outline__leading"></div>
+                    <div class="mdc-notched-outline__notch">
+                        <label for="comment" class="mdc-floating-label">Comment</label>
+                    </div>
+                    <div class="mdc-notched-outline__trailing"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="dmc-form__actions">
+        <button type="submit" class="mdc-button" id="submit">Ok</button>
+    </div>
+</form>
+<div class="mdc-snackbar">
+    <div class="mdc-snackbar__surface">
+        <div class="mdc-snackbar__label"
+             role="status"
+             aria-live="polite">
+            Placeholder
+        </div>
+    </div>
+</div>
