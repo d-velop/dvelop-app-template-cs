@@ -22,12 +22,7 @@ If you use Microsoft Visual Studio you will need "ASP.NET and web development", 
 
 Build the image for your app's build container ([Dockerfile](./buildcontainer/Dockerfile)).
 
-```
-cd buildcontainer
-docker build -t vacationprocess_build_deploy_cs .
-```
-
-Adjust the `BUILDCONTAINER` and `BUILDCONTAINER_VERSION` vars in [docker-build.bat](docker-build.bat) **and** [docker-build.sh](docker-build.sh) to match
+Adjust the `APPNAME` and if needet the `BUILDCONTAINER` vars in [docker-build.bat](docker-build.bat) **and** [docker-build.sh](docker-build.sh) to match
 the name of your app. And execute the build with
 
 ```
