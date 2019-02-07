@@ -8,10 +8,6 @@ namespace Dvelop.Lambda.EntryPoint.DependencyInjection
     {
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            container.Register(Classes.FromAssemblyNamed("AWSLambda.Adapter")
-                .Pick()
-                .WithServiceDefaultInterfaces()
-            );
             container.Register(Classes.FromAssemblyNamed("Adapter")
                 .Pick()
                 .WithServiceDefaultInterfaces()

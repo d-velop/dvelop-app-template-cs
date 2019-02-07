@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Dvelop.Domain.ExampleBusinessLogic;
 using Dvelop.Domain.Repositories;
 
-namespace Dvelop.SelfHosted.Adapter
+namespace Dvelop.Plugins.InMemoryDb
 {
     public class SelfHostedBusinessValueRepository : IBusinessValueRepository
     {

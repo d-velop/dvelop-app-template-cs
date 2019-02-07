@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Dvelop.SelfHosted.Adapter</RootNamespace>
-    <AssemblyName>SelfHosted.Adapter</AssemblyName>
+    <RootNamespace>Dvelop.Plugins.DynamoDbFake</RootNamespace>
+    <AssemblyName>Plugins.DynamoDbFake</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

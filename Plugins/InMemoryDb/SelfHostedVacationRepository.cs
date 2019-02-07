@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Dvelop.Domain.Repositories;
 using Dvelop.Domain.Vacation;
 
-namespace Dvelop.SelfHosted.Adapter
+namespace Dvelop.Plugins.InMemoryDb
 {
     public class SelfHostedVacationRepository : IVacationRepository
     {

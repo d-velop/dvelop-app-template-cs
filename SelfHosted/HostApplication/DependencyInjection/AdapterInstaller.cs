@@ -8,10 +8,6 @@ namespace Dvelop.Selfhosted.HostApplication.DependencyInjection
     {
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            container.Register(Classes.FromAssemblyNamed("SelfHosted.Adapter")
-                .Pick()
-                .WithServiceDefaultInterfaces()
-            );
             container.Register(Classes.FromAssemblyNamed("Adapter")
                 .Pick()
                 .WithServiceDefaultInterfaces()
