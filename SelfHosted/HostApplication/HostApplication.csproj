@@ -1,17 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	
 	<ItemGroup>
-		<PackageReference Include="Castle.Windsor" Version="4.1.1" />
-		<PackageReference Include="Castle.Windsor.MsDependencyInjection" Version="3.3.1" />
 		<PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.5" />
 	</ItemGroup>
 	
 	<ItemGroup>
-		<ProjectReference Include="..\..\Adapter\Adapter.csproj" />
 		<ProjectReference Include="..\..\Domain\Domain.csproj" />
 		<ProjectReference Include="..\..\Plugins\InMemoryDb\InMemoryDb.csproj" />
+		<ProjectReference Include="..\..\Plugins\WebApi\WebApi.csproj" />
 		<ProjectReference Include="..\..\Remote\Remote.csproj" />
-		<ProjectReference Include="..\Adapter\Adapter.csproj" />
 	</ItemGroup>
 	
 	<PropertyGroup>

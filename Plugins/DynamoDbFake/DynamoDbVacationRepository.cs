@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using Dvelop.Domain.Repositories;
 using Dvelop.Domain.Vacation;
 
-namespace Dvelop.Plugins.InMemoryDb
+namespace Dvelop.Plugins.DynamoDbFake
 {
-    public class SelfHostedVacationRepository : IVacationRepository
+    public class DynamoDbVacationRepository : IVacationRepository
     {
         private readonly ITenantRepository _tenantRepository;
 
         private readonly ConcurrentDictionary<string, Dictionary<Guid,VacationModel>> _vacationDatabase = new ConcurrentDictionary<string, Dictionary<Guid,VacationModel>>();
 
-        public SelfHostedVacationRepository(ITenantRepository tenantRepository)
+        public DynamoDbVacationRepository(ITenantRepository tenantRepository)
         {
             _tenantRepository = tenantRepository;
             var defaultValues = _vacationDatabase.GetOrAdd("0", new Dictionary<Guid, VacationModel>());

@@ -5,11 +5,11 @@ using Dvelop.Domain.Repositories;
 
 namespace Dvelop.Plugins.InMemoryDb
 {
-    public class SelfHostedBusinessValueRepository : IBusinessValueRepository
+    public class InMemoryBusinessValueRepository : IBusinessValueRepository
     {
 
         private List<BusinessValue> _values;
-        public SelfHostedBusinessValueRepository()
+        public InMemoryBusinessValueRepository()
         {
             _values = new List<BusinessValue>
             {

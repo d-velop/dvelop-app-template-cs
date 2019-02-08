@@ -15,8 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AwsLambda", "AwsLambda", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Selfhosted", "Selfhosted", "{E23EB320-7ADF-465D-80F7-5A035E5920AF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adapter", "Adapter\Adapter.csproj", "{E7403593-F959-4807-BE8C-A7CBA661DB50}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.UnitTests", "Domain.UnitTests\Domain.UnitTests.csproj", "{2FE5F484-774E-4266-AA07-5A0E3A29B9F0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8338D816-F61A-47E7-9123-90CEA93C926B}"
@@ -36,9 +34,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "terraform", "terraform", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{7A366A84-4E55-4D70-8C74-FF9F7C83E7EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamoDbFake", "Plugins\DynamoDbFake\DynamoDbFake.csproj", "{A73B545C-76EB-4432-9CB5-D9B6356E6306}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DynamoDbFake", "Plugins\DynamoDbFake\DynamoDbFake.csproj", "{A73B545C-76EB-4432-9CB5-D9B6356E6306}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InMemoryDb", "Plugins\InMemoryDb\InMemoryDb.csproj", "{02BF62D7-B7AD-4DDD-824D-3F6E784632B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InMemoryDb", "Plugins\InMemoryDb\InMemoryDb.csproj", "{02BF62D7-B7AD-4DDD-824D-3F6E784632B3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "Plugins\WebApi\WebApi.csproj", "{8ECF03DF-BF72-4305-AEA2-8B6657E95C1E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,10 +62,6 @@ Global
 		{BE7D3309-BC77-46F0-AB56-D021EDFEFA80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE7D3309-BC77-46F0-AB56-D021EDFEFA80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE7D3309-BC77-46F0-AB56-D021EDFEFA80}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E7403593-F959-4807-BE8C-A7CBA661DB50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E7403593-F959-4807-BE8C-A7CBA661DB50}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E7403593-F959-4807-BE8C-A7CBA661DB50}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E7403593-F959-4807-BE8C-A7CBA661DB50}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2FE5F484-774E-4266-AA07-5A0E3A29B9F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2FE5F484-774E-4266-AA07-5A0E3A29B9F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FE5F484-774E-4266-AA07-5A0E3A29B9F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -78,6 +74,10 @@ Global
 		{02BF62D7-B7AD-4DDD-824D-3F6E784632B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02BF62D7-B7AD-4DDD-824D-3F6E784632B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02BF62D7-B7AD-4DDD-824D-3F6E784632B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8ECF03DF-BF72-4305-AEA2-8B6657E95C1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8ECF03DF-BF72-4305-AEA2-8B6657E95C1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8ECF03DF-BF72-4305-AEA2-8B6657E95C1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8ECF03DF-BF72-4305-AEA2-8B6657E95C1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,6 +88,7 @@ Global
 		{F533BDAA-BE53-4A8E-8DA5-0AB116148F82} = {8338D816-F61A-47E7-9123-90CEA93C926B}
 		{A73B545C-76EB-4432-9CB5-D9B6356E6306} = {7A366A84-4E55-4D70-8C74-FF9F7C83E7EE}
 		{02BF62D7-B7AD-4DDD-824D-3F6E784632B3} = {7A366A84-4E55-4D70-8C74-FF9F7C83E7EE}
+		{8ECF03DF-BF72-4305-AEA2-8B6657E95C1E} = {7A366A84-4E55-4D70-8C74-FF9F7C83E7EE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0E76E69B-3A03-4E2D-B454-C161B428E5D9}
