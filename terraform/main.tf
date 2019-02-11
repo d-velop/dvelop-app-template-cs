@@ -25,6 +25,9 @@ module "serverless_lambda_app" {
   appname            = "${var.appname}"
   lambda_file        = "${local.lambda_file}"
   source_code_hash   = "${local.source_code_hash}"
+  
+  # If you change your output file names or namespaces, you will have to edit the next line
+  # <binary>::<name-space>.<class>::<function>
   lambda_handler      = "EntryPoint::Dvelop.Lambda.EntryPoint.LambdaEntryPoint::FunctionHandlerAsync"
   lambda_runtime      = "dotnetcore2.1"
   assets_bucket_name = "${local.assets_bucket_name}"
