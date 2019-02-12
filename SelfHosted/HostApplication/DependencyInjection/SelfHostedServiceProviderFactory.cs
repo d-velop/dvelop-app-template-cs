@@ -1,5 +1,4 @@
 ﻿using System;
-using Dvelop.Adapter;
 using Dvelop.Domain.ExampleBusinessLogic;
 using Dvelop.Domain.Repositories;
 using Dvelop.Domain.Vacation;
