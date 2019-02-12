@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using Dvelop.Domain.ExampleBusinessLogic;
 using Dvelop.Domain.Repositories;
 
-namespace Dvelop.AWSLambda.Adapter
+namespace Dvelop.Plugins.DynamoDbFake
 {
-    public class AwsBusinessValueRepository : IBusinessValueRepository
+    public class DynamoDbBusinessValueRepository : IBusinessValueRepository
     {
 
         private List<BusinessValue> _values;
-        public AwsBusinessValueRepository()
+        public DynamoDbBusinessValueRepository()
         {
             _values = new List<BusinessValue>
             {

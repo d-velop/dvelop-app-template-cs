@@ -2,7 +2,7 @@
 using Dvelop.Domain.Repositories;
 using Microsoft.AspNetCore.Http;
 
-namespace Dvelop.Adapter
+namespace Dvelop.Plugins.WebApi
 {
     public class TenantRepository : ITenantRepository
     {

@@ -4,16 +4,18 @@ using System.Collections.Generic;
 using Dvelop.Domain.Repositories;
 using Dvelop.Domain.Vacation;
 
-namespace Dvelop.SelfHosted.Adapter
+namespace Dvelop.Plugins.InMemoryDb
 {
-    public class SelfHostedVacationRepository : IVacationRepository
+    public class InMemoryVacationRepository : IVacationRepository
     {
         private readonly ITenantRepository _tenantRepository;
 
         private readonly ConcurrentDictionary<string, Dictionary<Guid,VacationModel>> _vacationDatabase = new ConcurrentDictionary<string, Dictionary<Guid,VacationModel>>();
 
-        public SelfHostedVacationRepository(ITenantRepository tenantRepository)
+        public InMemoryVacationRepository(ITenantRepository tenantRepository)
         {
+
+            Console.WriteLine( "test test " );
             _tenantRepository = tenantRepository;
             var defaultValues = _vacationDatabase.GetOrAdd("0", new Dictionary<Guid, VacationModel>());
             var value1 = new VacationModel
