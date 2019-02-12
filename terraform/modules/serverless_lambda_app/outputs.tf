@@ -14,6 +14,6 @@ output "aws_api_gateway_rest_api_endpoint_configuration_types" {
   value = ["${local.endpoint_configuration_types}"]
 }
 
-output "stages"{
+output "stages" {
   value = ["${aws_api_gateway_deployment.deployment.*.stage_name}"]
 }

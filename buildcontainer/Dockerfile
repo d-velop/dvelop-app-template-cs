@@ -5,7 +5,7 @@ RUN apt-get update
 
 # curl
 RUN apt-get -y install apt-utils curl && \
-    apt-get -y --fix-missing install --no-install-recommends unzip zip python python-pip openssh-client git-core build-essential && \
+    apt-get -y --fix-missing install --no-install-recommends unzip zip python python-pip openssh-client git-core build-essential jq && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

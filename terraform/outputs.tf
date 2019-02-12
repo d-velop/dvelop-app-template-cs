@@ -10,7 +10,10 @@ output "nameserver" {
   value = "${module.hosted_zone.nameserver}"
 }
 
-output "endpoint"{
+output "endpoint" {
   value = "${module.serverless_lambda_app.endpoints}"
 }
 
+output "domain" {
+  value = "${var.appname}${var.domainsuffix}"
+}
