@@ -8,7 +8,7 @@
         "SYSTEMBASEURI" :  "http://localhost:5000",
         "SIGNATURE_SECRET" :  "" ,
         "ASSET_BASE_PATH_" :  "https://assets.vacationprocess-cs.service.d-velop.cloud" ,
-        "RELATIVE_ASSET_DIR" : "..\\..\\..\\..\\..\\Remote\\wwwroot" 
+        "RELATIVE_ASSET_DIR" : "$(SolutionDir)\\Remote\\wwwroot" 
       }
     }
   }
