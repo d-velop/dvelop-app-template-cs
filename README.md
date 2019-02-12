@@ -194,31 +194,21 @@ Contains the EntryPoint for AWS-Lambda. This project will be used to bootstrap y
 
 You can add AWS-lambda specific ASP.NET Core settings in [LambdaEntryPoint.cs](AwsLambda/EntryPoint/LambdaEntryPoint.cs)
 
-#### `AwsLambda/Adapter`
-
-This project implement Domain-Interfaces to AWS specific resources. All dependencies of this project will be copied into the AWS-lambda function deployment package.
-
-You may need to configure the Dependency-Injection in [AdapterInstaller.cs](AwsLambda/Adapter/DependencyIncetion/AdapterInstaller.cs)
-
 #### `SelfHosted/HostApplication`
 
 Contains the EntryPoint for AWS-Lambda. This project will be used to start your App locally.
 
 You can specific ASP.NET Core settings in [Program.cs](SelfHosted/HostApplication/Program.cs)
 
-#### `SelfHosted/Adapter`
-
-This project adapts the Domain-Interfaces to local resources
-
 #### `Remote`
 
 Contains Controller, Views, static assets and Web-Api specific code.
 
-**Folderstructure**
+*Folderstructure*
 
-The folder `Constraints` contains a Constrain to enable Content Negotiation for ASP.NET Core 2.1. For more information about this topic visit [AspNetCore at Github](https://github.com/aspnet/AspNetCore/issues/3891)
+The folder `Constraints` contains a Constraint to enable Content Negotiation for ASP.NET Core 2.1. For more information about this topic visit [AspNetCore at Github](https://github.com/aspnet/AspNetCore/issues/3891)
 
-All WebApi-Controller are stored within `Controller`.
+All WebApi-Controller are stored within `Controller`. The DTOs and ViewModel-classes are also stored in this folder.
 
 `Formatter` contains a pre-configured Input- and Outputformatter for `application/hal+json`. For more information about hypermedia visit the [IETF Draft](https://tools.ietf.org/html/draft-kelly-json-hal-08)
 
@@ -226,12 +216,18 @@ All WebApi-Controller are stored within `Controller`.
 
 `Views` contains MVC-Views. The folder structure within the `Views` folder should be identical to the structure within the `Controller` folder.
 
-`wwwroot` contains static assets. If you want to include some frontendcode like an Angular-Single-page App for instance, you will need to configure the frontend buildprocess to output the assets into this directory. All files in this folder (expect `*.html`) will be copied into the S3 bucket for your assets. The deployment process `docker-build deploy` will create a hash over all files in this directory and create a S3 prefix to enable unlimitted caching.
+`wwwroot` contains static assets. If you want to include some frontendcode like an Angular-Single-page App for instance, you will need to configure the frontend buildprocess to output the assets into this directory. All files in this folder (expect `*.html`) will be copied into the S3 bucket for your assets (See: [Makefile: deploy-assets](Makefile#L62)). The deployment process `docker-build deploy` will create a hash over all files in this directory and create a S3 prefix to enable unlimitted caching.
 
-#### `Adapter`
+#### `Plugins`
 
-Contains GlueCode to separate your Domain-Logic from the hosting environment.
-Adapter in this project are used by the AWS-lambda environment and also by the local hosting environment.
+In this Folder are several projects to implement the interfaces defined by the `Domain` project.
+
+You can separate different implementation for AWS lambda and a self-hosted environment by creating more than one project. 
+
+Example: 
+AWS lambda uses a [DynamoDb (Fake)](Plugins/DynamoDbFake/DynamoDbBusinessValueRepository.cs) to implement [IBusinessValueRepository.cs](Domain/Repositories/IBusinessValueRepository.cs). 
+
+The self hosted environment has no persistence and uses a [InMemoryDb](Plugins/InMemoryDb/InMemoryBusinessValueRepository.cs) for testing.
 
 #### `Domain`
 
