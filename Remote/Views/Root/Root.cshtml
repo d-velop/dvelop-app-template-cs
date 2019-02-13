@@ -1,4 +1,6 @@
-﻿@model Dvelop.Remote.Controller.Root.ViewModel.RootView
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@model Dvelop.Remote.Controller.Root.ViewModel.RootView
 @{
     Layout = "_Layout";
 }
@@ -8,7 +10,7 @@
 </header>
 
 <main class="resource-content">
-    <a href="vacationrequest/">Vacation Process</a>
+    <a href="/@Configuration["APP_NAME"]/vacationrequest/">Vacation Process</a>
     <h2>Version: @Model.Version</h2>
 </main>
 
