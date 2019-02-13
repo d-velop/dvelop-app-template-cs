@@ -1,1 +1,0 @@
-If you delete this folder, you will also need to delete the local feed from ../nuget.config
