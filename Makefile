@@ -86,5 +86,5 @@ destroy: tf-init
 	-var "asset_hash=$(ASSET_HASH)" \
 	-input=false -force
 
-dns:
-	cd ./terraform && terraform output -json
+dns: tf-init
+	cd ./terraform && terraform output -json | jq "{Domain: .domain.value, Nameserver: .nameserver.value}" > ../dist/dns-entry.json
