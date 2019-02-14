@@ -87,10 +87,11 @@ namespace Dvelop.Remote
                             .RequireAuthenticatedUser()
                             .Build();
                         options.Filters.Add(new AuthorizeFilter(policy));
-
-    
-                    }
-                )
+                    })
+                .AddRazorPagesOptions(options => 
+                    {
+                        options.Conventions.AllowAnonymousToPage("/Error");
+                    })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1); // Should be set to 2.1 compatibility
             services.AddDirectoryBrowser();
             return _factory.CreateServiceProvider(services);
