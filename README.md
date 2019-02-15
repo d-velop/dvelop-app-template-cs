@@ -171,7 +171,7 @@ Some important key aspects are:
 
 **Example:**
 
-The domain logic needs to add, update and list vacations. The interface is defined in [Domain/Vacation/IVacationRepository.cs](Domain/Vacation/IVacationRepository.cs) as
+The domain logic needs to add, update and list vacations. The interface is defined in [Domain/Repositories/IVacationRepository.cs](Domain/Repositories/IVacationRepository.cs) as
 
 ```
 public interface IVacationRepository
@@ -183,7 +183,7 @@ public interface IVacationRepository
 ```
 
 There are two *different* implementations for this interface. One for AWS-lambda
-([AwsLambda/Adapter/AwsVacationRepository.cs](AwsLambda/Adapter/AwsVacationRepository.cs)) and another for the self hosted environment ([SelfHosted/Adapter/SelfHostedVacationRepository.cs](SelfHosted/Adapter/SelfHostedVacationRepository.cs)).
+([DynamoDb (Fake)](Plugins/DynamoDbFake/DynamoDbVacationRepository.cs)) and another for the self hosted environment ([InMemoryDb](Plugins/InMemoryDb/InMemoryVacationRepository.cs)).
 
 
 ### Projects
@@ -225,9 +225,9 @@ In this Folder are several projects to implement the interfaces defined by the `
 You can separate different implementation for AWS lambda and a self-hosted environment by creating more than one project. 
 
 Example: 
-AWS lambda uses a [DynamoDb (Fake)](Plugins/DynamoDbFake/DynamoDbBusinessValueRepository.cs) to implement [IBusinessValueRepository.cs](Domain/Repositories/IBusinessValueRepository.cs). 
+AWS lambda uses a [DynamoDb (Fake)](Plugins/DynamoDbFake/DynamoDbVacationRepository.cs) to implement [IVacationRepository.cs](Domain/Vacation/IVacationRepository.cs). 
 
-The self hosted environment has no persistence and uses a [InMemoryDb](Plugins/InMemoryDb/InMemoryBusinessValueRepository.cs) for testing.
+The self hosted environment has no persistence and uses a [InMemoryDb](Plugins/InMemoryDb/InMemoryVacationRepository.cs) for testing.
 
 #### `Domain`
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using Dvelop.Domain.ExampleBusinessLogic;
 using Dvelop.Domain.Repositories;
 using Dvelop.Domain.Vacation;
 using Dvelop.Domain.VersionService;
@@ -20,10 +19,8 @@ namespace Dvelop.Lambda.EntryPoint.DependencyInjection
 
             services.AddSingleton<IVersionService, VersionService>();
             services.AddSingleton<IVacationService, VacationService>();
-            services.AddSingleton<IExampleBusinessLogicService, ExampleBusinessLogicService>();
             
             services.AddSingleton<IVacationRepository, DynamoDbVacationRepository>();
-            services.AddSingleton<IBusinessValueRepository, DynamoDbBusinessValueRepository>();
             return services.BuildServiceProvider();
         }
     }

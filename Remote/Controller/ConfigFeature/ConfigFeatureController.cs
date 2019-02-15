@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using dvelop.IdentityProvider.Client;
 using Dvelop.Domain.Repositories;
-using Dvelop.Remote.Controller.BusinessValue;
 using Dvelop.Remote.Controller.ConfigFeature.Dto;
 using Dvelop.Remote.Controller.VacationRequest;
 using Microsoft.AspNetCore.Mvc;
@@ -46,9 +45,9 @@ namespace Dvelop.Remote.Controller.ConfigFeature
             {
                 customHeadlineDto.MenuItems.Add(new MenuItemDto
                 {
-                    Caption = "Business Values",
-                    Description = "Configure your business values",
-                    Href = Url.RouteUrl(nameof(BusinessValueController) + "." + nameof(BusinessValueController.GetJsonList),
+                    Caption = "Pending vacations",
+                    Description = "Accept or reject vacations",
+                    Href = Url.RouteUrl(nameof(VacationRequestController) + "." + nameof(VacationRequestController.GetVacationListView),
                         null),
 
                     Keywords = new List<string>
@@ -56,16 +55,17 @@ namespace Dvelop.Remote.Controller.ConfigFeature
                         "c#",
                         "hackathon",
                         "code",
-                        "example"
+                        "example",
+                        "vacation"
                     }
                 });
             }
 
             customHeadlineDto.MenuItems.Add(new MenuItemDto
             {
-                Caption = "Vacation",
-                Description = "Your Vacation",
-                Href = Url.RouteUrl(nameof(VacationRequestController) + "." + nameof(VacationRequestController.GetVacationListView),
+                Caption = "Request vacation",
+                Description = "Your vacation",
+                Href = Url.RouteUrl(nameof(VacationRequestController) + "." + nameof(VacationRequestController.GetVacationFormView),
                     null),
 
                 Keywords = new List<string>

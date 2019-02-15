@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dvelop.Domain.Vacation;
 
-namespace Dvelop.Domain.Vacation
+namespace Dvelop.Domain.Repositories
 {
     public interface IVacationRepository
     {

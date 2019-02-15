@@ -1,6 +1,5 @@
 ﻿using Dvelop.Domain.VersionService;
 using Dvelop.Remote.Constraints;
-using Dvelop.Remote.Controller.BusinessValue;
 using Dvelop.Remote.Controller.ConfigFeature;
 using Dvelop.Remote.Controller.HomeFeature;
 using Dvelop.Remote.Controller.Root.Dto;
@@ -43,8 +42,8 @@ namespace Dvelop.Remote.Controller.Root
 
             // Adding Features (HAL-LinkRelations)
             versionDto._links.Add(VacationRequestController.ValuesRelation,new RelationDataDto(Url.RouteUrl($"{nameof(VacationRequestController)}.{nameof(VacationRequestController.GetVacationList)}")));
-            versionDto._links.Add(BusinessValueController.ValuesRelation,new RelationDataDto(Url.RouteUrl($"{nameof(BusinessValueController)}.{nameof(BusinessValueController.GetJsonList)}")));
-            versionDto._links.Add(ConfigFeaturesController.ConfigFeatures, new RelationDataDto(Url.RouteUrl(nameof(ConfigFeaturesController)+"."+nameof(ConfigFeaturesController.GetConfigFeatures), null)));
+            // Add Features to the ConfigApp (not available yet)
+            // versionDto._links.Add(ConfigFeaturesController.ConfigFeatures, new RelationDataDto(Url.RouteUrl(nameof(ConfigFeaturesController)+"."+nameof(ConfigFeaturesController.GetConfigFeatures), null)));
             versionDto._links.Add(HomeFeatureController.FeaturesDescription, new RelationDataDto(Url.RouteUrl(nameof(HomeFeatureController)+"."+nameof(HomeFeatureController.GetFeaturesDescriptions))));
             return versionDto;
         }
