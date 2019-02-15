@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28527.54
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntryPoint", "AwsLambda\Entrypoint\EntryPoint.csproj", "{2710CB0E-0CAA-4D91-A969-5FE78766A954}"
 EndProject
@@ -19,8 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.UnitTests", "Domain.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8338D816-F61A-47E7-9123-90CEA93C926B}"
 	ProjectSection(SolutionItems) = preProject
-		buildcontainer\Dockerfile = buildcontainer\Dockerfile
-		buildcontainer\umask.sh = buildcontainer\umask.sh
+		docker-build.bat = docker-build.bat
+		docker-build.sh = docker-build.sh
+		environment = environment
 		Makefile = Makefile
 		NuGet.config = NuGet.config
 		README.md = README.md
@@ -42,6 +43,41 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InMemoryDb", "Plugins\InMemoryDb\InMemoryDb.csproj", "{02BF62D7-B7AD-4DDD-824D-3F6E784632B3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "Plugins\WebApi\WebApi.csproj", "{8ECF03DF-BF72-4305-AEA2-8B6657E95C1E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "buildcontainer", "buildcontainer", "{13DEC394-5BFD-407B-93DE-0F03E5D62B57}"
+	ProjectSection(SolutionItems) = preProject
+		buildcontainer\Dockerfile = buildcontainer\Dockerfile
+		buildcontainer\umask.sh = buildcontainer\umask.sh
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "modules", "modules", "{72E5A4BF-4E10-4098-897D-680A0B7FC7FA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api_custom_domain", "api_custom_domain", "{FAC1CD99-BFEC-4C0D-BEBA-908574DB8B3C}"
+	ProjectSection(SolutionItems) = preProject
+		terraform\modules\api_custom_domain\main.tf = terraform\modules\api_custom_domain\main.tf
+		terraform\modules\api_custom_domain\variables.tf = terraform\modules\api_custom_domain\variables.tf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cloudfront_distribution", "cloudfront_distribution", "{63B0A805-BC7A-4A6F-981D-E669893CE5D0}"
+	ProjectSection(SolutionItems) = preProject
+		terraform\modules\cloudfront_distribution\main.tf = terraform\modules\cloudfront_distribution\main.tf
+		terraform\modules\cloudfront_distribution\outputs.tf = terraform\modules\cloudfront_distribution\outputs.tf
+		terraform\modules\cloudfront_distribution\variables.tf = terraform\modules\cloudfront_distribution\variables.tf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "hosted_zone", "hosted_zone", "{4D98C55B-48D6-47C6-AE8E-2A5F8D3FCED7}"
+	ProjectSection(SolutionItems) = preProject
+		terraform\modules\hosted_zone\main.tf = terraform\modules\hosted_zone\main.tf
+		terraform\modules\hosted_zone\outputs.tf = terraform\modules\hosted_zone\outputs.tf
+		terraform\modules\hosted_zone\variables.tf = terraform\modules\hosted_zone\variables.tf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "serverless_lambda_app", "serverless_lambda_app", "{3550A2DE-52AA-4147-95BE-1B0DD2AB8D44}"
+	ProjectSection(SolutionItems) = preProject
+		terraform\modules\serverless_lambda_app\main.tf = terraform\modules\serverless_lambda_app\main.tf
+		terraform\modules\serverless_lambda_app\outputs.tf = terraform\modules\serverless_lambda_app\outputs.tf
+		terraform\modules\serverless_lambda_app\variables.tf = terraform\modules\serverless_lambda_app\variables.tf
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,6 +128,12 @@ Global
 		{A73B545C-76EB-4432-9CB5-D9B6356E6306} = {7A366A84-4E55-4D70-8C74-FF9F7C83E7EE}
 		{02BF62D7-B7AD-4DDD-824D-3F6E784632B3} = {7A366A84-4E55-4D70-8C74-FF9F7C83E7EE}
 		{8ECF03DF-BF72-4305-AEA2-8B6657E95C1E} = {7A366A84-4E55-4D70-8C74-FF9F7C83E7EE}
+		{13DEC394-5BFD-407B-93DE-0F03E5D62B57} = {8338D816-F61A-47E7-9123-90CEA93C926B}
+		{72E5A4BF-4E10-4098-897D-680A0B7FC7FA} = {F533BDAA-BE53-4A8E-8DA5-0AB116148F82}
+		{FAC1CD99-BFEC-4C0D-BEBA-908574DB8B3C} = {72E5A4BF-4E10-4098-897D-680A0B7FC7FA}
+		{63B0A805-BC7A-4A6F-981D-E669893CE5D0} = {72E5A4BF-4E10-4098-897D-680A0B7FC7FA}
+		{4D98C55B-48D6-47C6-AE8E-2A5F8D3FCED7} = {72E5A4BF-4E10-4098-897D-680A0B7FC7FA}
+		{3550A2DE-52AA-4147-95BE-1B0DD2AB8D44} = {72E5A4BF-4E10-4098-897D-680A0B7FC7FA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0E76E69B-3A03-4E2D-B454-C161B428E5D9}
