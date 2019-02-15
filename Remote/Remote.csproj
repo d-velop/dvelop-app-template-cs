@@ -17,9 +17,6 @@
 	   <Content Update="Views\Root\Root.cshtml">
 	   <Pack>$(IncludeRazorContentInPack)</Pack>
 	   </Content>
-	   <Content Update="Views\BusinessValue\BusinessValueList.cshtml">
-	     <Pack>$(IncludeRazorContentInPack)</Pack>
-	   </Content>
 	   <Content Update="Views\Shared\_Layout.cshtml">
 	     <Pack>$(IncludeRazorContentInPack)</Pack>
 	   </Content>

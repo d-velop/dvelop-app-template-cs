@@ -1,5 +1,4 @@
 ﻿using System;
-using Dvelop.Domain.ExampleBusinessLogic;
 using Dvelop.Domain.Repositories;
 using Dvelop.Domain.Vacation;
 using Dvelop.Domain.VersionService;
@@ -22,11 +21,9 @@ namespace Dvelop.Selfhosted.HostApplication.DependencyInjection
             // Serviceinstaller for Domain Logic
             services.AddSingleton<IVersionService, VersionService>();
             services.AddSingleton<IVacationService, VacationService>();
-            services.AddSingleton<IExampleBusinessLogicService, ExampleBusinessLogicService>();
 
             //Serviceinstaller for InMemoryDatabase
             services.AddSingleton<IVacationRepository, InMemoryVacationRepository>();
-            services.AddSingleton<IBusinessValueRepository, InMemoryBusinessValueRepository>();
             return services.BuildServiceProvider();
         }
     }
