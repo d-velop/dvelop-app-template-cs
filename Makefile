@@ -1,5 +1,5 @@
-APP_NAME=vacationprocess-cs
-DOMAIN_SUFFIX=.service.d-velop.cloud
+APP_NAME=acme-apptemplatecs
+DOMAIN_SUFFIX=.hackathon.service.d-velop.cloud
 BUILD_VERSION=rev.$(shell git rev-parse --short HEAD).date.$(shell date '+%d-%m-%Y-%H.%M.%S')
 
 all: build
@@ -78,8 +78,8 @@ show: tf-init
 
 destroy: tf-init
 	echo "destroy is disabled. Uncomment in Makefile to enable destroy."
-	#cd ./terraform && \
-	#terraform destroy -var "signature_secret=$(SIGNATURE_SECRET)" \
+	cd ./terraform && \
+	terraform destroy -var "signature_secret=$(SIGNATURE_SECRET)" \
 	-var "build_version=$(BUILD_VERSION)" \
 	-var "appname=$(APP_NAME)" \
 	-var "domainsuffix=$(DOMAIN_SUFFIX)" \

@@ -2,7 +2,7 @@
 
 setlocal enableextensions enabledelayedexpansion
 
-set APPNAME=acme-apptemplatego
+set APPNAME=acme-apptemplatecs
 set BUILDCONTAINER=registry.invalid/%APPNAME%_build
 
 set "denv="
