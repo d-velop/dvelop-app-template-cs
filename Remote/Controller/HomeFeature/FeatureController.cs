@@ -40,7 +40,7 @@ namespace Dvelop.Remote.Controller.HomeFeature
                 Title = "Vacation Process",
                 SubTitle = "Example of d.velop cloud platform integration",
                 Summary = "Extend the d.velop cloud platform",
-                Url = Url.RouteUrl(nameof(VacationRequestController) + "." +nameof(VacationRequestController.GetVacationListView)),
+                Url = Url.RouteUrl(nameof(VacationRequestController) + "." +nameof(VacationRequestController.GetVacationListView)) + "/",
                 Color = "pumpkin",
                 Icon = "dv-tags",
                 Description = "Learn to create a d.ecs architecture application for extending the d.velop cloud platform."
