@@ -25,6 +25,7 @@ module "serverless_lambda_app" {
   appname            = "${var.appname}"
   lambda_file        = "${local.lambda_file}"
   source_code_hash   = "${local.source_code_hash}"
+  lambda_memory_size = "512"
   
   # If you change your output file names or namespaces, you will have to edit the next line
   # <binary>::<name-space>.<class>::<function>
