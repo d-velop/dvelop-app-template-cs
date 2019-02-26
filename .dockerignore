@@ -1,10 +1,4 @@
 .git/
 .vs/
 .vscode/
-Adapter/
-AwsLambda/
-Domain/
-Domain.UnitTests/
 dist/
-Remote/
-SelfHosted/

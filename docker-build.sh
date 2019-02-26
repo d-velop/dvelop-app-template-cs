@@ -9,7 +9,7 @@ for var in $(cat environment); do
 done
 
 echo "Building new docker image ..."
-docker build -t ${BUILDCONTAINER} ./buildcontainer > ./buildcontainer/build.log
+docker build -t ${BUILDCONTAINER} -f ./buildcontainer/Dockerfile . > ./buildcontainer/build.log
 if [[ $? -eq 0 ]]; then
     echo "done"
 else

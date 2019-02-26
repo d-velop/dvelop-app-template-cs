@@ -11,7 +11,7 @@ for /f "usebackq delims=" %%a in ("environment") do (
 )
 
 echo Building new docker image ...
-docker build -t %BUILDCONTAINER% ./buildcontainer > ./buildcontainer/build.log && (
+docker build -t %BUILDCONTAINER% -f ./buildcontainer/Dockerfile . > ./buildcontainer/build.log && (
     echo done
 ) || (
     echo error building image

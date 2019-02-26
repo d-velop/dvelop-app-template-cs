@@ -64,7 +64,23 @@ RUN curl -sSL https://s3.amazonaws.com/aws-cli/awscli-bundle.zip -o awscli-bundl
     ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws && \
     rm awscli-bundle.zip && rm -rf ./awscli-bundle
 
-COPY umask.sh /
+# Copy project structure to populate the nuget cache
+WORKDIR /tmp/cache
+COPY ./AcmeTemplate.sln ./NuGet.config ./
+COPY ./AwsLambda/Entrypoint/EntryPoint.csproj ./AwsLambda/Entrypoint/EntryPoint.csproj
+COPY ./Domain/Domain.csproj ./Domain/Domain.csproj
+COPY ./Domain.UnitTests/Domain.UnitTests.csproj ./Domain.UnitTests/Domain.UnitTests.csproj
+COPY ./Plugins/DynamoDbFake/DynamoDbFake.csproj ./Plugins/DynamoDbFake/DynamoDbFake.csproj
+COPY ./Plugins/InMemoryDb/InMemoryDb.csproj ./Plugins/InMemoryDb/InMemoryDb.csproj
+COPY ./Plugins/WebApi/WebApi.csproj ./Plugins/WebApi/WebApi.csproj
+COPY ./Remote/Remote.csproj ./Remote/Remote.csproj
+COPY ./SelfHosted/HostApplication/HostApplication.csproj ./SelfHosted/HostApplication/HostApplication.csproj
+RUN set -x \
+    && dotnet restore \
+    && rm -rf /tmp/cache
+
+WORKDIR /build
+COPY buildcontainer/umask.sh /
 RUN chmod +x /umask.sh
 	
 WORKDIR /build
