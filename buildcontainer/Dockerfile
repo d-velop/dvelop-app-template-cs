@@ -80,6 +80,8 @@ RUN set -x \
     && rm -rf /tmp/cache
 
 WORKDIR /build
+COPY . /build
+
 COPY buildcontainer/umask.sh /
 RUN chmod +x /umask.sh
 	

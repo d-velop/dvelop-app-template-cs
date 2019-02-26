@@ -21,7 +21,7 @@ docker build -t %BUILDCONTAINER% -f ./buildcontainer/Dockerfile . > ./buildconta
 setlocal disabledelayedexpansion
 
 if "%1"=="it" (
-    docker run -it --rm %denv% -v %cd%:/build --entrypoint /bin/bash %BUILDCONTAINER%
+    docker run -it --rm %denv% -v %cd%/terraform:/build/terraform --entrypoint /bin/bash %BUILDCONTAINER%
 ) else (
-    docker run --rm %denv% -v %cd%:/build %BUILDCONTAINER% %*
+    docker run --rm %denv% -v %cd%/terraform:/build/terraform %BUILDCONTAINER% %*
 )
