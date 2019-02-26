@@ -40,7 +40,7 @@
 		<ApplicationIcon />
 		<OutputType>Library</OutputType>
 		<RootNamespace>Dvelop.Remote</RootNamespace>
-		<RuntimeFramework>2.1.5</RuntimeFramework>
+		<RuntimeFrameworkVersion>2.1.5</RuntimeFrameworkVersion>
 		<TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
 	</PropertyGroup>
   
