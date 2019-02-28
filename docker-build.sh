@@ -18,7 +18,7 @@ else
 fi
 
 if [[ "$1" = "it" ]]; then
-    docker run -it --rm ${DENV} --mount type=bind,src="$(pwd)",dst=/build --entrypoint /bin/bash ${BUILDCONTAINER}
+    docker run -it --rm ${DENV} --mount type=bind,src="$(pwd)",dst=/build --mount type=volume,src=${APPNAME}_nuget,dst=/root/.nuget/packages --entrypoint /bin/bash ${BUILDCONTAINER}
 else
-    docker run --rm ${DENV} --mount type=bind,src="$(pwd)",dst=/build ${BUILDCONTAINER} "$@"
+    docker run --rm ${DENV} --mount type=bind,src="$(pwd)",dst=/build --mount type=volume,src=${APPNAME}_nuget,dst=/root/.nuget/packages ${BUILDCONTAINER} "$@"
 fi

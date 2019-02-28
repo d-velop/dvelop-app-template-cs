@@ -21,7 +21,7 @@ docker build -t %BUILDCONTAINER% ./buildcontainer > ./buildcontainer/build.log &
 setlocal disabledelayedexpansion
 
 if "%1"=="it" (
-    docker run -it --rm %denv% -v %cd%:/build --entrypoint /bin/bash %BUILDCONTAINER%
+    docker run --rm -it %denv% --mount type=bind,src=%cd%,dst=/build --mount type=volume,src=%APPNAME%_nuget,dst=/root/.nuget/packages --entrypoint /bin/bash %BUILDCONTAINER%
 ) else (
-    docker run --rm %denv% -v %cd%:/build %BUILDCONTAINER% %*
+    docker run --rm %denv% --mount type=bind,src=%cd%,dst=/build --mount type=volume,src=%APPNAME%_nuget,dst=/root/.nuget/packages %BUILDCONTAINER% %*
 )
