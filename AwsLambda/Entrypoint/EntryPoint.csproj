@@ -8,7 +8,6 @@
     <StartupObject />
     <RootNamespace>Dvelop.Lambda.EntryPoint</RootNamespace>
     <AssemblyName>EntryPoint</AssemblyName>
-    <AutoGenerateBindingRedirects>starrst</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
 	<PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="2.1.0" />
