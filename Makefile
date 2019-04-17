@@ -81,7 +81,7 @@ ifndef NAME
 $(error NAME is not set. Usage: rename NAME=NEW_APP_NAME)
 endif
 	@echo Rename App to $(NAME) ...
-	find . -name "docker-build.*" -or -name "Makefile" -or -name "*.tf" -or -name "*.go" | while read f; do		\
+	find . -name "docker-build.*" -or -name "Makefile" -or -name "*.tf" -or -name "*.cs" | while read f; do		\
 		echo "Processing file '$$f'";															\
 		sed -i 's/$(APP_NAME)/$(NAME)/g' $$f;														\
 	done
