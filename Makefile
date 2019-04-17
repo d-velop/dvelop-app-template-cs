@@ -77,9 +77,7 @@ show: tf-init
 	terraform show
 	
 rename:
-ifndef NAME
-$(error NAME is not set. Usage: rename NAME=NEW_APP_NAME)
-endif
+	if [ -z $${NAME} ]; then echo "NAME is not set. Usage: rename NAME=NEW_APP_NAME"; exit 1; fi
 	@echo Rename App to $(NAME) ...
 	find . -name "docker-build.*" -or -name "Makefile" -or -name "*.tf" -or -name "*.cs" | while read f; do		\
 		echo "Processing file '$$f'";															\
