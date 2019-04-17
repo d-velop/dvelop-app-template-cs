@@ -58,19 +58,19 @@ something like `superduperltd-vacationprocess`App. Note that the `App` suffix is
 
 Apps belonging to the core d.velop cloud platform don't have a provider prefix. 
 
-For now the following places have to be adjusted manually as soon as the name of the app changes:
+Use the `rename` target to rename your app:
 
-1.  `Makefile` change the `APP_NAME` variable. Furthermore change the `DOMAIN_SUFFIX` to a domain you own like `yourcompany.com`
-2.  `/terraform/backend.tf` change the `bucket` names (2 occurrences)
-3.  `docker-build.bat` and `dockerbuild.sh` change the `APPNAME` variable      
-4.  `/Remote/Startup.cs` change the Default value for the `Configuration["APP_NAME"]`
-    
-The 'Replace' function of your IDE should help.
+```
+docker-build rename NAME=NEW_APP_NAME
+```
+
+Furthermore you might want to adjust the following values manually:
+
+1.  Change the `DOMAIN_SUFFIX` to a domain you own like `yourcompany.com`
 
 **Please finish at least step 1 and step 2 before you [deploy](#deployment) your app because the names of a lot of
 AWS resources are derived from the `APP_NAME` and `DOMAIN_SUFFIX`. Changing them afterwards requires a
 redeployment of the AWS resources which takes some time.**
-
 
 ## Deployment
 
