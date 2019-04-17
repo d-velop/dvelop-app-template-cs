@@ -6,7 +6,7 @@ terraform {
     # bucket names must be globally unique across all AWS customers
     # so we choose a combination of company prefix ('acme')
     # and purpose (terraform) and appname (apptemplatego)
-    bucket = "acme-terraform-apptemplatecs"
+    bucket = "acme-apptemplatecs-terraform"
     key    = "state"
 
     # variables can't be used
@@ -21,7 +21,7 @@ data "terraform_remote_state" "app" {
     # bucket names must be globally unique across all AWS customers
     # so we choose a combination of company prefix ('acme')
     # and purpose (terraform) and appname (apptemplatego)
-    bucket = "acme-terraform-apptemplatecs"
+    bucket = "acme-apptemplatecs-terraform"
     key    = "state"
 
     # variables can't be used
