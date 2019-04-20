@@ -12,10 +12,14 @@ clean: init
 	dotnet clean
 
 init:
+	echo "Create directories, if not present"
+	mkdir -p /build/dist
+	echo "Copy all source from the mount into the container, to enable deployment and editing with an IDE at the same time"
+	rsync -r --verbose --exclude '.terraform' --exclude '.git' --exclude 'dist' --exclude '**/obj**' --exclude \
+		'**/bin/**' --exclude terraform --exclude '.*' --exclude 'TestResults' /build/ /buildinternal/
 	echo "Init project and download dependency from nuget-repository"
 	dotnet restore
-	echo "Create output directory, if not present"
-	mkdir -p /build/dist
+	
 
 test: init
 	echo "Executing all tests"
@@ -26,14 +30,14 @@ build: clean build-app build-lambda
 build-app: generate test
 	echo "Building app for Windows..."
 	dotnet publish --self-contained -r win-x64 -c Release ./SelfHosted/HostApplication/HostApplication.csproj
-	cd /build/SelfHosted/HostApplication/bin/Release/netcoreapp2.1/win-x64/publish/ && 	\
+	cd /buildinternal/SelfHosted/HostApplication/bin/Release/netcoreapp2.1/win-x64/publish/ && 	\
 		echo "Creating windows_<rev>.zip from: " && \
 		zip -x wwwroot/dvelop-dux/images\* -r /build/dist/windows_$(BUILD_VERSION).zip .
 
 build-lambda: generate test
 	echo "Building lambda..."
 	dotnet publish -c Release ./AwsLambda/Entrypoint/EntryPoint.csproj
-	cd /build/AwsLambda/Entrypoint/bin/Release/netcoreapp2.1/publish/ && \
+	cd /buildinternal/AwsLambda/Entrypoint/bin/Release/netcoreapp2.1/publish/ && \
 		echo "Creating lambda.zip from: " && \
 		zip -x wwwroot\* -r /build/dist/lambda.zip .
 
@@ -62,7 +66,7 @@ apply: plan
 deploy-assets: asset_hash apply
 	echo "Deploying static content to S3"
 	# best practice for immutable content: cache 1 year (vgl https://jakearchibald.com/2016/caching-best-practices/)
-	aws s3 sync /build/AwsLambda/Entrypoint/bin/Release/netcoreapp2.1/publish/wwwroot s3://assets.$(APP_NAME)$(DOMAIN_SUFFIX)/$(ASSET_HASH) --exclude "*.html" --cache-control max-age=31536000
+	aws s3 sync ~/buildtemp/AwsLambda/Entrypoint/bin/Release/netcoreapp2.1/publish/wwwroot s3://assets.$(APP_NAME)$(DOMAIN_SUFFIX)/$(ASSET_HASH) --exclude "*.html" --cache-control max-age=31536000
 
 asset_hash:
 	echo "Creating hash for static content to create a cachable path within S3"

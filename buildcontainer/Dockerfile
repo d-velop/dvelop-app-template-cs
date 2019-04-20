@@ -1,13 +1,11 @@
 FROM microsoft/dotnet 
-WORKDIR /build
 
-RUN apt-get update
+WORKDIR /buildinternal
 
-# curl
-RUN apt-get -y install apt-utils curl && \
-    apt-get -y --fix-missing install --no-install-recommends unzip zip python python-pip openssh-client git-core build-essential jq && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get -y --fix-missing install apt-utils curl rsync unzip zip python python-pip openssh-client git-core build-essential jq && \
+    apt-get clean     
+RUN rm -rf /var/lib/apt/lists/*
 
 # packer
 ENV PACKER_VERSION 1.2.5
@@ -66,6 +64,6 @@ RUN curl -sSL https://s3.amazonaws.com/aws-cli/awscli-bundle.zip -o awscli-bundl
 
 COPY umask.sh /
 RUN chmod +x /umask.sh
-	
-WORKDIR /build
+
+
 ENTRYPOINT [ "/umask.sh" ]
