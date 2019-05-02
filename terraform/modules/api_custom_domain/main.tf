@@ -53,7 +53,7 @@ resource "aws_api_gateway_domain_name" "stage" {
 
   # By convention the 'prod' stage is mapped to the name of the provided hosted zone without the prefix 'prod'
   domain_name              = "${var.stages[count.index] != "prod" ? format("%s.", var.stages[count.index]) : "" }${local.hosted_zone_name}"
-  regional_certificate_arn = "${aws_acm_certificate.cert.arn}"
+  regional_certificate_arn = "${aws_acm_certificate_validation.cert.certificate_arn}"
 
   endpoint_configuration {
     types = "${var.aws_api_gateway_rest_api_endpoint_configuration_types}"
