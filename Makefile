@@ -43,13 +43,13 @@ build-lambda: generate test
 
 tf-init:
 	echo "Initializing terraform"
-	cd ./terraform && \
+	cd /build/terraform && \
 	terraform init -input=false -plugin-dir=/usr/local/lib/custom-terraform-plugins
 
 plan: tf-init build-lambda asset_hash
 	echo "Planning terraform changes"
 	$(eval PLAN=$(shell mktemp))
-	cd ./terraform && \
+	cd /build/terraform && \
 	terraform plan -input=false \
 	-var "signature_secret=$(SIGNATURE_SECRET)" \
 	-var "build_version=$(BUILD_VERSION)" \
@@ -60,13 +60,13 @@ plan: tf-init build-lambda asset_hash
 
 apply: plan
 	echo "Applying terraform changes"
-	cd ./terraform && \
+	cd /build/terraform && \
 	terraform apply -input=false -auto-approve=true $(PLAN)
 
 deploy-assets: asset_hash apply
 	echo "Deploying static content to S3"
 	# best practice for immutable content: cache 1 year (vgl https://jakearchibald.com/2016/caching-best-practices/)
-	aws s3 sync ~/buildtemp/AwsLambda/Entrypoint/bin/Release/netcoreapp2.1/publish/wwwroot s3://assets.$(APP_NAME)$(DOMAIN_SUFFIX)/$(ASSET_HASH) --exclude "*.html" --cache-control max-age=31536000
+	aws s3 sync /buildinternal/AwsLambda/Entrypoint/bin/Release/netcoreapp2.1/publish/wwwroot s3://assets.$(APP_NAME)$(DOMAIN_SUFFIX)/$(ASSET_HASH) --exclude "*.html" --cache-control max-age=31536000
 
 asset_hash:
 	echo "Creating hash for static content to create a cachable path within S3"
@@ -77,8 +77,8 @@ deploy: apply deploy-assets
 
 show: tf-init
 	echo "Show actual AWS Resources"
-	cd ./terraform && \
-	terraform show
+	cd /build/terraform && \
+	terraform show -input=false
 	
 rename:
 	if [ -z $${NAME} ]; then echo "NAME is not set. Usage: rename NAME=NEW_APP_NAME"; exit 1; fi
@@ -90,7 +90,7 @@ rename:
 
 destroy: tf-init
 	echo "destroy is disabled. Uncomment in Makefile to enable destroy."
-	cd ./terraform && \
+	cd /build/terraform && \
 	terraform destroy -var "signature_secret=$(SIGNATURE_SECRET)" \
 	-var "build_version=$(BUILD_VERSION)" \
 	-var "appname=$(APP_NAME)" \
@@ -98,5 +98,5 @@ destroy: tf-init
 	-var "asset_hash=$(ASSET_HASH)" \
 	-input=false -force
 
-dns: tf-init
-	cd ./terraform && terraform output -json | jq "{Domain: .domain.value, Nameserver: .nameserver.value}" > ../dist/dns-entry.json
+dns: tf-init	
+	cd /build/terraform && terraform output -input=false -json | jq "{Domain: .domain.value, Nameserver: .nameserver.value}" > ../dist/dns-entry.json

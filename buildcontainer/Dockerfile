@@ -15,8 +15,8 @@ RUN curl -fsSL https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${
     unzip packer.zip -d /usr/local/bin && chmod +x /usr/local/bin/packer ; rm packer.zip
 
 # terraform
-ENV TERRAFORM_VERSION 0.11.8
-ENV TERRAFORM_CHECKSUM 84ccfb8e13b5fce63051294f787885b76a1fedef6bdbecf51c5e586c9e20c9b7
+ENV TERRAFORM_VERSION 0.11.13
+ENV TERRAFORM_CHECKSUM 5925cd4d81e7d8f42a0054df2aafd66e2ab7408dbed2bd748f0022cfe592f8d2
 RUN curl -fsSL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -o terraform.zip  && \
     echo "${TERRAFORM_CHECKSUM} terraform.zip" | sha256sum -c - && \
     unzip terraform.zip -d /usr/local/bin && chmod +x /usr/local/bin/terraform ; rm terraform.zip
@@ -29,22 +29,22 @@ RUN curl -fsSL https://releases.hashicorp.com/terraform-provider-terraform/${TER
     unzip terraform_terraform_plugin.zip -d /usr/local/lib/custom-terraform-plugins ; rm terraform_terraform_plugin.zip
 
 # terraform template provider plugin
-ENV TERRAFORM_TEMPLATE_PLUGIN_VERSION 1.0.0
-ENV TERRAFORM_TEMPLATE_PLUGIN_CHECKSUM f54c2764bd4d4c62c1c769681206dde7aa94b64b814a43cb05680f1ec8911977
+ENV TERRAFORM_TEMPLATE_PLUGIN_VERSION 2.1.1
+ENV TERRAFORM_TEMPLATE_PLUGIN_CHECKSUM de3c45a4fa1f756aa4db3350c021d1c0f9b23640cff77e0ba4df4eeb8eae957f
 RUN curl -fsSL https://releases.hashicorp.com/terraform-provider-template/${TERRAFORM_TEMPLATE_PLUGIN_VERSION}/terraform-provider-template_${TERRAFORM_TEMPLATE_PLUGIN_VERSION}_linux_amd64.zip -o terraform_template_plugin.zip  && \
     echo "${TERRAFORM_TEMPLATE_PLUGIN_CHECKSUM} terraform_template_plugin.zip" | sha256sum -c - && \
     unzip terraform_template_plugin.zip -d /usr/local/lib/custom-terraform-plugins ; rm terraform_template_plugin.zip
 
 # terraform aws provider plugin
-ENV TERRAFORM_AWS_PLUGIN_VERSION 1.31.0
-ENV TERRAFORM_AWS_PLUGIN_CHECKSUM c64b54d3778133795845d1294c62be5b011c407ebb7b8de66f6de3ad31aeb95b
+ENV TERRAFORM_AWS_PLUGIN_VERSION 2.7.0
+ENV TERRAFORM_AWS_PLUGIN_CHECKSUM b2a046c82f38c1c9b89503be7d4b83049b1af445d11ea08a1b2b3196d510d02f
 RUN curl -fsSL https://releases.hashicorp.com/terraform-provider-aws/${TERRAFORM_AWS_PLUGIN_VERSION}/terraform-provider-aws_${TERRAFORM_AWS_PLUGIN_VERSION}_linux_amd64.zip -o terraform_aws_plugin.zip  && \
     echo "${TERRAFORM_AWS_PLUGIN_CHECKSUM} terraform_aws_plugin.zip" | sha256sum -c - && \
     unzip terraform_aws_plugin.zip -d /usr/local/lib/custom-terraform-plugins ; rm terraform_aws_plugin.zip
 
 # terraform null provider plugin
-ENV TERRAFORM_NULL_PLUGIN_VERSION 1.0.0
-ENV TERRAFORM_NULL_PLUGIN_CHECKSUM e0cb71b742e7feb69aa618b91c4cf5cb36e403e3a637c29c5d27cb201b1b68f5
+ENV TERRAFORM_NULL_PLUGIN_VERSION 2.1.1
+ENV TERRAFORM_NULL_PLUGIN_CHECKSUM 5b29f6a87f4dae4dc295a43f499182221333dbe474fcf724b8ea98fd38cfb3e6
 RUN curl -fsSL https://releases.hashicorp.com/terraform-provider-null/${TERRAFORM_NULL_PLUGIN_VERSION}/terraform-provider-null_${TERRAFORM_NULL_PLUGIN_VERSION}_linux_amd64.zip -o terraform_null_plugin.zip  && \
     echo "${TERRAFORM_NULL_PLUGIN_CHECKSUM} terraform_null_plugin.zip" | sha256sum -c - && \
     unzip terraform_null_plugin.zip -d /usr/local/lib/custom-terraform-plugins ; rm terraform_null_plugin.zip

@@ -5,10 +5,10 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "SYSTEMBASEURI" :  "http://localhost:5000",
-        "SIGNATURE_SECRET" :  "" ,
-        "ASSET_BASE_PATH_" :  "https://assets.vacationprocess-cs.service.d-velop.cloud" ,
-        "RELATIVE_ASSET_DIR" : "$(SolutionDir)\\Remote\\wwwroot" 
+        "SYSTEMBASEURI": "http://localhost:5000",
+        "SIGNATURE_SECRET": "",
+        "ASSET_BASE_PATH_": "https://s3-eu-central-1.amazonaws.com/assets.acme-apptemplatecs.hackathon.service.d-velop.cloud/d41d8cd98f00b204e9800998ecf8427e",
+        "RELATIVE_ASSET_DIR": "$(SolutionDir)\\Remote\\wwwroot"
       }
     }
   }

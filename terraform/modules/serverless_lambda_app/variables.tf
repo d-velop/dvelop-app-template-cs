@@ -39,7 +39,7 @@ variable "lambda_runtime" {
 
 variable "lambda_memory_size" {
   description = "Amount of memory in MB your Lambda Function can use at runtime"
-  default     = "128"
+  default     = "512"
 }
 
 variable "lambda_environment_vars" {
