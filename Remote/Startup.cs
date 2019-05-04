@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using dvelop.IdentityProvider.Client;
 using dvelop.IdentityProvider.Client.AuthenticationHandler;
 using dvelop.IdentityProvider.Client.Middleware;
@@ -16,9 +17,12 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 
 namespace Dvelop.Remote
 {
@@ -63,11 +67,7 @@ namespace Dvelop.Remote
                 options.DefaultChallengeScheme = "IdentityProvider";
                 options.DefaultForbidScheme = "IdentityProvider";
 
-            }).AddIdentityProviderAuthentication("IdentityProvider", "d.velop Identity Provider", options =>
-            {
-
-
-            });
+            }).AddIdentityProviderAuthentication("IdentityProvider", "d.velop Identity Provider", options => { });
             
             // Create and configure Mvc
             services.AddMvc(options =>
@@ -82,7 +82,6 @@ namespace Dvelop.Remote
                         options.OutputFormatters.Insert(0, new HalJsonOutputFormatter());
                         
                         // Only Allow Authenticated User to access this application (Use [AllowAnonymous] to allow anonymous access)
-                        
                         var policy = new AuthorizationPolicyBuilder()
                             .RequireAuthenticatedUser()
                             .Build();
@@ -94,13 +93,28 @@ namespace Dvelop.Remote
                     })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1); // Should be set to 2.1 compatibility
             services.AddDirectoryBrowser();
+
             return _factory.CreateServiceProvider(services);
         }
 
         // This method gets called by the ASP .NET core runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IActionDescriptorCollectionProvider  actionDescriptorProvider)
         {
-           
+
+            var routes = actionDescriptorProvider.ActionDescriptors.Items.Where(ad => ad.AttributeRouteInfo != null).ToList();
+            routes.ForEach(ad =>
+            {
+                Console.WriteLine($"{ad.AttributeRouteInfo.Name} -> '/{ad.AttributeRouteInfo.Template}'");
+            });
+
+
+            // If running without 'api_custom_domains'-Feature, the requests need to be rewritten to omit the
+            // Lambda stage /prod or /dev of the Created API-gateway.
+            app.UseRewriter(new RewriteOptions()
+                .AddRewrite(@"^prod/(.*)", "$1", true)
+                .AddRewrite(@"^dev/(.*)", "$1", true));
+
+
             // Enable Multi-Tenancy
             app.UseTenantMiddleware(new TenantMiddlewareOptions
             {
@@ -152,7 +166,7 @@ namespace Dvelop.Remote
             app.Use(async (httpContext, next) =>
             {
                 httpContext.Response.Headers.Append("vary", new[] { "accept", "accept-language", "x-dv-sig-1"});
-                Console.WriteLine($"{httpContext.Request.Host.Host} ->  {httpContext.Request.Path}" );
+                Console.WriteLine($"{httpContext.Request.Method} ->  {httpContext.Request.Path}" );
                 await next.Invoke();
             });
             
