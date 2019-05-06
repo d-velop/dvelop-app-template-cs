@@ -1,0 +1,9 @@
+language: csharp
+mono: none
+dotnet: 2.1.603
+
+services:
+  - docker
+
+script:
+- docker-build.sh build
