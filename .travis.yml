@@ -6,4 +6,5 @@ services:
   - docker
 
 script:
+- ls -lisah
 - docker-build.sh build
