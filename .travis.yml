@@ -6,4 +6,4 @@ services:
   - docker
 
 script:
-- ./docker-build.sh build
+- bash ./docker-build.sh build
