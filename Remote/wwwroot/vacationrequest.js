@@ -39,7 +39,7 @@ submitBtn.addEventListener("click", function (e) {
     const r = new XMLHttpRequest();
     r.addEventListener("load", function () {
         if (r.status === 201) {
-            window.location = "./vacationrequest/";
+            window.location = "../vacationrequest/";
         } else if (r.status === 200) {
             snackbar.labelText = "Request succeeded.";
         } else {
