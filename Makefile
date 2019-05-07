@@ -70,7 +70,7 @@ deploy-assets: asset_hash apply
 
 asset_hash:
 	echo "Creating hash for static content to create a cachable path within S3"
-	$(eval ASSET_HASH=$(shell find web -type f ! -path "*.html" -exec md5sum {} \; | sort -k 2 | md5sum | tr -d " -"))
+	$(eval ASSET_HASH=$(shell find /build/Remote/wwwroot -type f ! -path "*.html" -exec md5sum {} \; | sort -k 2 | md5sum | tr -d " -"))
 
 deploy: apply deploy-assets
 	echo "Deployment of AWS Resources finished"

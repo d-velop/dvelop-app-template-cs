@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using dvelop.IdentityProvider.Client;
 using dvelop.IdentityProvider.Client.AuthenticationHandler;
 using dvelop.IdentityProvider.Client.Middleware;
@@ -16,9 +17,12 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 
 namespace Dvelop.Remote
 {
@@ -26,9 +30,12 @@ namespace Dvelop.Remote
     {
         private readonly ICustomServiceProviderFactory _factory;
 
-        public Startup(IConfiguration configuration, ICustomServiceProviderFactory factory)
+        private readonly ILogger<Startup> _logger;
+
+        public Startup(IConfiguration configuration, ICustomServiceProviderFactory factory, ILoggerFactory loggerFactory)
         {
             _factory = factory;
+            _logger = loggerFactory.CreateLogger<Startup>();
             Configuration = configuration;
 
             Configuration["DEFAULT_SYSTEM_BASE_URI"] = Configuration["SYSTEMBASEURI"]??"http://localhost";
@@ -38,14 +45,12 @@ namespace Dvelop.Remote
             Configuration["BASE"] = $"/{Configuration["APP_NAME"]}";
             Configuration["ASSETS"] = Configuration["ASSET_BASE_PATH"]??$"{Configuration["DEFAULT_SYSTEM_BASE_URI"]}{Configuration["BASE"]}";
             
-            Console.WriteLine($"SYSTEMBASEURI: {Configuration["SYSTEMBASEURI"]}");
-            Console.WriteLine($"DEFAULT_SYSTEM_BASE_URI: {Configuration["DEFAULT_SYSTEM_BASE_URI"]}");
-            Console.WriteLine($"SIGNATURE_SECRET set: {!string.IsNullOrWhiteSpace(Configuration["SIGNATURE_SECRET"])}");
-            Console.WriteLine($"APP_NAME: {Configuration["APP_NAME"]}");
-            Console.WriteLine($"ASSETS: {Configuration["ASSETS"]}");
-            Console.WriteLine($"BASE: {Configuration["BASE"]}");
-
-
+            _logger.LogInformation($"SYSTEMBASEURI: {Configuration["SYSTEMBASEURI"]}");
+            _logger.LogInformation($"DEFAULT_SYSTEM_BASE_URI: {Configuration["DEFAULT_SYSTEM_BASE_URI"]}");
+            _logger.LogInformation($"SIGNATURE_SECRET set: {!string.IsNullOrWhiteSpace(Configuration["SIGNATURE_SECRET"])}");
+            _logger.LogInformation($"APP_NAME: {Configuration["APP_NAME"]}");
+            _logger.LogInformation($"ASSETS: {Configuration["ASSETS"]}");
+            _logger.LogInformation($"BASE: {Configuration["BASE"]}");
         }
 
         public IConfiguration Configuration { get; }
@@ -63,11 +68,7 @@ namespace Dvelop.Remote
                 options.DefaultChallengeScheme = "IdentityProvider";
                 options.DefaultForbidScheme = "IdentityProvider";
 
-            }).AddIdentityProviderAuthentication("IdentityProvider", "d.velop Identity Provider", options =>
-            {
-
-
-            });
+            }).AddIdentityProviderAuthentication("IdentityProvider", "d.velop Identity Provider", options => { });
             
             // Create and configure Mvc
             services.AddMvc(options =>
@@ -82,7 +83,6 @@ namespace Dvelop.Remote
                         options.OutputFormatters.Insert(0, new HalJsonOutputFormatter());
                         
                         // Only Allow Authenticated User to access this application (Use [AllowAnonymous] to allow anonymous access)
-                        
                         var policy = new AuthorizationPolicyBuilder()
                             .RequireAuthenticatedUser()
                             .Build();
@@ -94,13 +94,45 @@ namespace Dvelop.Remote
                     })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1); // Should be set to 2.1 compatibility
             services.AddDirectoryBrowser();
+            services.AddLogging(loggingBuilder => loggingBuilder.SetMinimumLevel(LogLevel.Information));
+            services.AddRouting(routeOptions => routeOptions.AppendTrailingSlash = true );
             return _factory.CreateServiceProvider(services);
         }
 
         // This method gets called by the ASP .NET core runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IActionDescriptorCollectionProvider  actionDescriptorProvider)
         {
-           
+            // Print information about bound routes and the Controller, they are bound to.
+            var routes = actionDescriptorProvider.ActionDescriptors.Items.Where(ad => ad.AttributeRouteInfo != null).ToList();
+            routes.ForEach(ad =>
+            {
+                _logger.LogInformation($"{ad.AttributeRouteInfo.Template} -> '/{ad.AttributeRouteInfo.Name}'");
+            });
+
+            // Important:
+            // If running without 'api_custom_domains'-Feature, the requests need to be rewritten to omit the
+            // API-Gateway stage /prod or /dev, if running as a d.velop cloud App within a tenant aware environment.
+            app.UseRewriter(new RewriteOptions()
+                
+                // Amazon.Lambda.AspNetCoreServer.APIGatewayProxyFunction sets the BasePath-property to the name of the API-Gateway Stage.
+                // This RewriteRule can or should be removed, if: 
+                //   - The 'api_custom_domains'-Feature is activated
+                //   - There is no url-Rewriting Reverse-Proxy (You call the Api-Gateway Url directly).
+                .Add(rc =>
+                    {
+                        var oldPathBase = rc.HttpContext.Request.PathBase;
+                        rc.HttpContext.Request.PathBase = "";
+                        _logger.LogDebug($"Changed PathBase from '{oldPathBase}' to '{rc.HttpContext.Request.PathBase}'");
+                        rc.Result = RuleResult.ContinueRules;
+                    })
+
+                // This redirect ensures, that a URL is always used with an trailing '/', expect in the last segment ist a '.'.
+                .AddRedirect(@"^(((.*/)|(/?))[^/.]+(?!/$))$", "$1/",302)
+            );
+            
+            // This will a a virtual path-segment to the application
+            app.UsePathBase(Configuration["BASE"]);
+
             // Enable Multi-Tenancy
             app.UseTenantMiddleware(new TenantMiddlewareOptions
             {
@@ -132,8 +164,7 @@ namespace Dvelop.Remote
                     };
                 }
             });
-            
-            
+
             if (env.IsDevelopment())
             {
                 // We want to see detailed information about errors
@@ -146,13 +177,15 @@ namespace Dvelop.Remote
                 app.UseHsts();
             }
 
-            app.UsePathBase(Configuration["BASE"]);
-           
-
             app.Use(async (httpContext, next) =>
             {
+                // Vary Header determines which additional header fields should be used
+                // to decide if a request can be answered from a cache
+                // cf. https://tools.ietf.org/html/rfc7234#section-4.1
+                // accept is added because most resources deliver JSON and HTML from the same URI
+                // x-dv-sig-1 ist added because most of the responses are tenant specific
                 httpContext.Response.Headers.Append("vary", new[] { "accept", "accept-language", "x-dv-sig-1"});
-                Console.WriteLine($"{httpContext.Request.Host.Host} ->  {httpContext.Request.Path}" );
+                _logger.LogDebug($"{httpContext.Request.Method} ->  {httpContext.Request.Path}" );
                 await next.Invoke();
             });
             

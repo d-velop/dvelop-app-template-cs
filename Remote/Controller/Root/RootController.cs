@@ -7,11 +7,12 @@ using Dvelop.Remote.Controller.Root.ViewModel;
 using Dvelop.Remote.Controller.VacationRequest;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace Dvelop.Remote.Controller.Root
 {
-    [AllowAnonymous]    // Allows anonymous requests (for getting version information and /home-App features)
-    [Route("/")]        // Binds to configured root route
+    [AllowAnonymous]        // Allows anonymous requests (for getting version information and /home-App features)
+    [Route("")]     // Binds to configured root route
     public class RootController: Microsoft.AspNetCore.Mvc.Controller
     {
         private readonly IVersionService _versionService;
@@ -40,10 +41,11 @@ namespace Dvelop.Remote.Controller.Root
                 Qualifier = version.Qualifier
             };
 
+            
             // Adding Features (HAL-LinkRelations)
             versionDto._links.Add(VacationRequestController.ValuesRelation,new RelationDataDto(Url.RouteUrl($"{nameof(VacationRequestController)}.{nameof(VacationRequestController.GetVacationList)}")));
             // Add Features to the ConfigApp (not available yet)
-            // versionDto._links.Add(ConfigFeaturesController.ConfigFeatures, new RelationDataDto(Url.RouteUrl(nameof(ConfigFeaturesController)+"."+nameof(ConfigFeaturesController.GetConfigFeatures), null)));
+            versionDto._links.Add(ConfigFeaturesController.ConfigFeatures, new RelationDataDto(Url.RouteUrl(nameof(ConfigFeaturesController)+"."+nameof(ConfigFeaturesController.GetConfigFeatures), null)));
             versionDto._links.Add(HomeFeatureController.FeaturesDescription, new RelationDataDto(Url.RouteUrl(nameof(HomeFeatureController)+"."+nameof(HomeFeatureController.GetFeaturesDescriptions))));
             return versionDto;
         }
@@ -62,7 +64,7 @@ namespace Dvelop.Remote.Controller.Root
             {
                Version = version.ToString()
             };
-            ViewData["Title"] = "d.velop decs architecture app";
+            ViewData["Title"] = "d.velop cloud app";
             return View("Root", model);
         }
     }
