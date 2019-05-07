@@ -3,6 +3,5 @@ mono: none
 dotnet: 2.1.603
 
 script:
-- dotnet restore
 - dotnet build
 - dotnet test
