@@ -94,8 +94,8 @@ namespace Dvelop.Remote
                     })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1); // Should be set to 2.1 compatibility
             services.AddDirectoryBrowser();
-            services.AddLogging(loggingBuilder => loggingBuilder.SetMinimumLevel(LogLevel.Debug));
-            services.AddRouting(routeOptions => { routeOptions.AppendTrailingSlash = true; });
+            services.AddLogging(loggingBuilder => loggingBuilder.SetMinimumLevel(LogLevel.Information));
+            services.AddRouting(routeOptions => routeOptions.AppendTrailingSlash = true );
             return _factory.CreateServiceProvider(services);
         }
 
@@ -106,20 +106,18 @@ namespace Dvelop.Remote
             var routes = actionDescriptorProvider.ActionDescriptors.Items.Where(ad => ad.AttributeRouteInfo != null).ToList();
             routes.ForEach(ad =>
             {
-                _logger.LogInformation($"{ad.AttributeRouteInfo.Name} -> '/{ad.AttributeRouteInfo.Template}'");
-            });
-            
-            app.Use(async (httpContext, next) =>
-            {
-                _logger.LogDebug($"1 {httpContext.Request.PathBase} - {httpContext.Request.Path}");
-                await next.Invoke();
+                _logger.LogInformation($"{ad.AttributeRouteInfo.Template} -> '/{ad.AttributeRouteInfo.Name}'");
             });
 
-
+            // Important:
             // If running without 'api_custom_domains'-Feature, the requests need to be rewritten to omit the
-            // Lambda stage /prod or /dev of the Created API-gateway.
+            // API-Gateway stage /prod or /dev, if running as a d.velop cloud App within a tenant aware environment.
             app.UseRewriter(new RewriteOptions()
-                // This line will replace the Api-Gateway Stage ('/prod' or '/dev') with '/'
+                
+                // Amazon.Lambda.AspNetCoreServer.APIGatewayProxyFunction sets the BasePath-property to the name of the API-Gateway Stage.
+                // This RewriteRule can or should be removed, if: 
+                //   - The 'api_custom_domains'-Feature is activated
+                //   - There is no url-Rewriting Reverse-Proxy (You call the Api-Gateway Url directly).
                 .Add(rc =>
                     {
                         var oldPathBase = rc.HttpContext.Request.PathBase;
@@ -127,23 +125,13 @@ namespace Dvelop.Remote
                         _logger.LogDebug($"Changed PathBase from '{oldPathBase}' to '{rc.HttpContext.Request.PathBase}'");
                         rc.Result = RuleResult.ContinueRules;
                     })
+
                 // This redirect ensures, that a URL is always used with an trailing '/', expect in the last segment ist a '.'.
                 .AddRedirect(@"^(((.*/)|(/?))[^/.]+(?!/$))$", "$1/",302)
             );
             
-            app.Use(async (httpContext, next) =>
-            {
-                _logger.LogDebug($"2 {httpContext.Request.PathBase} - {httpContext.Request.Path}");
-                await next.Invoke();
-            });
-            
+            // This will a a virtual path-segment to the application
             app.UsePathBase(Configuration["BASE"]);
-
-            app.Use(async (httpContext, next) =>
-            {
-                _logger.LogDebug($"3 {httpContext.Request.PathBase} - {httpContext.Request.Path}");
-                await next.Invoke();
-            });
 
             // Enable Multi-Tenancy
             app.UseTenantMiddleware(new TenantMiddlewareOptions
@@ -176,8 +164,7 @@ namespace Dvelop.Remote
                     };
                 }
             });
-            
-            
+
             if (env.IsDevelopment())
             {
                 // We want to see detailed information about errors
@@ -190,10 +177,13 @@ namespace Dvelop.Remote
                 app.UseHsts();
             }
 
-            
-
             app.Use(async (httpContext, next) =>
             {
+                // Vary Header determines which additional header fields should be used
+                // to decide if a request can be answered from a cache
+                // cf. https://tools.ietf.org/html/rfc7234#section-4.1
+                // accept is added because most resources deliver JSON and HTML from the same URI
+                // x-dv-sig-1 ist added because most of the responses are tenant specific
                 httpContext.Response.Headers.Append("vary", new[] { "accept", "accept-language", "x-dv-sig-1"});
                 _logger.LogDebug($"{httpContext.Request.Method} ->  {httpContext.Request.Path}" );
                 await next.Invoke();
