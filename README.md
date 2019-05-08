@@ -74,6 +74,17 @@ redeployment of the AWS resources which takes some time.**
 
 ## Deployment
 
+**Please read [Rename the app](#rename-the-app) before you proceed with the deployment.**
+
+You need an AWS Account to deploy your app. At the time of writing some of the AWS services are
+free to use for a limited amount of time and workload. 
+Check the [Free Tier](https://aws.amazon.com/free/) offering from AWS for the current conditions.
+
+Manually create an IAM user with
+the appropriate rights to create the AWS resources defined by your terraform configuration. 
+You could start with a user who has the `arn:aws:iam::aws:policy/AdministratorAccess` policy to start quickly, 
+but you **should definitely restrict the rights of that IAM user to a minimum as soon as you go into production**.
+
 Configure your AWS credentials by using one of the methods described in
 [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html).
 For example set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables.

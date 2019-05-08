@@ -41,7 +41,18 @@ build-lambda: generate test
 		echo "Creating lambda.zip from: " && \
 		zip -x wwwroot\* -r /build/dist/lambda.zip .
 
-tf-init:
+tf-bucket:
+	$(eval BUCKET_NAME=$(APP_NAME)-terraform)
+	@aws s3api get-bucket-location --bucket $(BUCKET_NAME) > /dev/null 2>&1; \
+	if  [ "$$?" -ne "0" ]; \
+	then \
+		echo Create terraform state bucket \"$(BUCKET_NAME)\"...; \
+		aws s3api create-bucket --bucket $(BUCKET_NAME) --acl private --region eu-central-1 --create-bucket-configuration LocationConstraint=eu-central-1 &&\
+		aws s3api put-bucket-versioning --bucket $(BUCKET_NAME) --versioning-configuration Status=Enabled &&\
+		aws s3api put-public-access-block --bucket $(BUCKET_NAME) --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true; \
+	fi
+
+tf-init: tf-bucket
 	echo "Initializing terraform"
 	cd /build/terraform && \
 	terraform init -input=false -plugin-dir=/usr/local/lib/custom-terraform-plugins
