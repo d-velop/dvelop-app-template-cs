@@ -1,6 +1,6 @@
 # cs-app-template
 
-This template contains everything you need to write an app for the d.velop cloud.
+This template contains everything you need to write an app for the [d.velop cloud](https://my.d-velop.cloud).
 
 To demonstrate all the aspects of app development the hypothetical but not trivial use case
 of *an employee applying for vacation* is implemented.
@@ -89,6 +89,7 @@ Configure your AWS credentials by using one of the methods described in
 [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html).
 For example set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables.
 
+:note: The `environment` file should not be edited in any way, i.e. it must not contain any keys. 
 
 **Windows**
 
