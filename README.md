@@ -89,8 +89,6 @@ Configure your AWS credentials by using one of the methods described in
 [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html).
 For example set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables.
 
-:note: The `environment` file should not be edited in any way, i.e. it must not contain any keys. 
-
 **Windows**
 
 ```
@@ -104,6 +102,14 @@ SET AWS_SECRET_ACCESS_KEY=<YOUR-SECRET-ACCESS-KEY>
 export AWS_ACCESS_KEY_ID=<YOUR-ACCESS-KEY-ID>
 export AWS_SECRET_ACCESS_KEY=<YOUR-SECRET-ACCESS-KEY>
 ```
+
+:warning: Please ensure, that these secrets are **never** available in any public repository. 
+
+The `environment` must not contain any secrets or set environmet variables itself. 
+
+This file contains a list of keys for environmentvariables, which should be made available 
+within the docker-Container. The variables are copied into the container by the 
+[docker-build.bat](docker-build.bat#L9) and [docker-build.sh](docker-build.sh#L8) scripts.
 
 Deploy the lambda function and all other AWS Ressources like AWS API Gateway.
 
