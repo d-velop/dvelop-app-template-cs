@@ -62,11 +62,11 @@ plan: tf-init build-lambda asset_hash
 	$(eval PLAN=$(shell mktemp))
 	cd /build/terraform && \
 	terraform plan -input=false \
-	-var "signature_secret=$(SIGNATURE_SECRET)" \
-	-var "build_version=$(BUILD_VERSION)" \
-	-var "appname=$(APP_NAME)" \
-	-var "domainsuffix=$(DOMAIN_SUFFIX)" \
-	-var "asset_hash=$(ASSET_HASH)" \
+	-var 'signature_secret="$(SIGNATURE_SECRET)"' \
+	-var 'build_version="$(BUILD_VERSION)"' \
+	-var 'appname="$(APP_NAME)"' \
+	-var 'domainsuffix="$(DOMAIN_SUFFIX)"' \
+	-var 'asset_hash="$(ASSET_HASH)"' \
 	-out=$(PLAN)
 
 apply: plan
@@ -103,10 +103,10 @@ destroy: tf-init
 	echo "destroy is disabled. Uncomment in Makefile to enable destroy."
 	cd /build/terraform && \
 	terraform destroy -var "signature_secret=$(SIGNATURE_SECRET)" \
-	-var "build_version=$(BUILD_VERSION)" \
-	-var "appname=$(APP_NAME)" \
-	-var "domainsuffix=$(DOMAIN_SUFFIX)" \
-	-var "asset_hash=$(ASSET_HASH)" \
+	-var 'build_version="$(BUILD_VERSION)"' \
+	-var 'appname="$(APP_NAME)"' \
+	-var 'domainsuffix="$(DOMAIN_SUFFIX)"' \
+	-var 'asset_hash="$(ASSET_HASH)"' \
 	-input=false -force
 
 dns: tf-init	
