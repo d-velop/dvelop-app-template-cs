@@ -5,6 +5,7 @@ resource "aws_route53_zone" "hosted_zone" {
 
 # cf. https://www.terraform.io/docs/providers/aws/r/route53_record.html
 resource "aws_route53_record" "ns" {
+  allow_overwrite = true
   zone_id = "${aws_route53_zone.hosted_zone.zone_id}"
   name    = "${aws_route53_zone.hosted_zone.name}"
   type    = "NS"
