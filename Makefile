@@ -101,13 +101,7 @@ rename:
 
 destroy: tf-init
 	echo "destroy is disabled. Uncomment in Makefile to enable destroy."
-	cd /build/terraform && \
-	terraform destroy -var "signature_secret=$(SIGNATURE_SECRET)" \
-	-var 'build_version="$(BUILD_VERSION)"' \
-	-var 'appname="$(APP_NAME)"' \
-	-var 'domainsuffix="$(DOMAIN_SUFFIX)"' \
-	-var 'asset_hash="$(ASSET_HASH)"' \
-	-input=false -force
+	#cd /build/terraform && terraform destroy -var 'signature_secret="$SIGNATURE_SECRET"' -var 'build_version="$build_version"' -var 'appname="$(APP_NAME)"' -var 'domainsuffix="$(DOMAIN_SUFFIX)"' -input=false -force
 
 dns: tf-init	
 	cd /build/terraform && terraform output -input=false -json | jq "{Domain: .domain.value, Nameserver: .nameserver.value}" > ../dist/dns-entry.json
