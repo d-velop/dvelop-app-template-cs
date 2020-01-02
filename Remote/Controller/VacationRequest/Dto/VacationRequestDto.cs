@@ -1,4 +1,5 @@
 ﻿using System;
+using Dvelop.Sdk.Base.Dtos;
 
 namespace Dvelop.Remote.Controller.VacationRequest.Dto
 {

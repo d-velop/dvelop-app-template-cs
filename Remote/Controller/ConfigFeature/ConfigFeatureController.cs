@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
-using dvelop.IdentityProvider.Client;
 using Dvelop.Domain.Repositories;
-using Dvelop.Remote.Controller.ConfigFeature.Dto;
+
 using Dvelop.Remote.Controller.VacationRequest;
+using Dvelop.Sdk.Config.Dto;
+using Dvelop.Sdk.IdentityProvider.Client;
 using Microsoft.AspNetCore.Mvc;
 
 

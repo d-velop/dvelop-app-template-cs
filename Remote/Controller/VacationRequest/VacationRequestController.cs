@@ -5,6 +5,7 @@ using Dvelop.Domain.Vacation;
 using Dvelop.Remote.Constraints;
 using Dvelop.Remote.Controller.VacationRequest.Dto;
 using Dvelop.Remote.Controller.VacationRequest.ViewModel;
+using Dvelop.Sdk.Base.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using dvelop.IdentityProvider.Client;
-using dvelop.IdentityProvider.Client.AuthenticationHandler;
-using dvelop.IdentityProvider.Client.Middleware;
-using dvelop.TenantMiddleware;
+using System.Net.Http;
+using Dvelop.Sdk.TenantMiddleware;
 using Dvelop.Domain.Repositories;
 using Dvelop.Remote.Formatter;
+using Dvelop.Sdk.IdentityProvider.Client;
+using Dvelop.Sdk.IdentityProvider.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,7 +35,9 @@ namespace Dvelop.Remote
         public Startup(IConfiguration configuration, ICustomServiceProviderFactory factory, ILoggerFactory loggerFactory)
         {
             _factory = factory;
+            
             _logger = loggerFactory.CreateLogger<Startup>();
+            
             Configuration = configuration;
 
             Configuration["DEFAULT_SYSTEM_BASE_URI"] = Configuration["SYSTEMBASEURI"]??"http://localhost";
@@ -139,12 +141,17 @@ namespace Dvelop.Remote
                 DefaultSystemBaseUri = Configuration["DEFAULT_SYSTEM_BASE_URI"],
                 DefaultTenantId = "0",
                 SignatureSecretKey = Convert.FromBase64String(Configuration["SIGNATURE_SECRET"]),
+
                 OnTenantIdentified = (tenantId, systemBaseUri) =>
                 {
                     // Use Built-In Dependency Injection to Store Tenant Information (Bound to Request-Context)
                     var tenantRepository = app.ApplicationServices.GetService<ITenantRepository>();
                     tenantRepository.SystemBaseUri = new Uri(systemBaseUri);
                     tenantRepository.TenantId = tenantId;
+                },
+                LogCallback = (level, s) =>
+                {
+                    _logger.LogError($"TenantMiddleware: {level} ->  {s}" );
                 }
             });
 
@@ -153,15 +160,17 @@ namespace Dvelop.Remote
             {
                 BaseAddress = new Uri(Configuration["DEFAULT_SYSTEM_BASE_URI"]),
                 TriggerAuthentication = true,
-                
+                HttpClient = new HttpClient(),
                 TenantInformationCallback = () =>
                 {
                     var tenantRepository = app.ApplicationServices.GetService<ITenantRepository>();
+                    _logger.LogError($"Tenant Identified {tenantRepository.TenantId} {tenantRepository.SystemBaseUri}");
                     return new TenantInformation
                     {
                         TenantId = tenantRepository.TenantId,
-                        SystembaseUri = tenantRepository.SystemBaseUri.ToString()
+                        SystemBaseUri = tenantRepository.SystemBaseUri.ToString()
                     };
+                    
                 }
             });
 
