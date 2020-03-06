@@ -2,6 +2,9 @@ language: csharp
 mono: none
 dotnet: 2.1.603
 
+services:
+  - docker
+before_install:
+  - docker build -t acme-template:${TRAVIS_BUILD_NUMBER} ./buildcontainer
 script:
-- dotnet build
-- dotnet test
+  - docker run --rm --mount type=bind,src="$(pwd)",dst=/build acme-template:${TRAVIS_BUILD_NUMBER} test
