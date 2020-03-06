@@ -1,4 +1,6 @@
-﻿namespace Dvelop.Remote.Controller.Root.Dto
+﻿using Dvelop.Sdk.Base.Dto;
+
+namespace Dvelop.Remote.Controller.Root.Dto
 {
     public class RootDto : HalJsonDto
     {

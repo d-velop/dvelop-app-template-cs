@@ -1,5 +1,6 @@
-﻿using Dvelop.Remote.Controller.HomeFeature.Dto;
+﻿
 using Dvelop.Remote.Controller.VacationRequest;
+using Dvelop.Sdk.Home.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dvelop.Remote.Controller.HomeFeature
