@@ -70,7 +70,7 @@ namespace Dvelop.Remote
                 options.DefaultChallengeScheme = "IdentityProvider";
                 options.DefaultForbidScheme = "IdentityProvider";
 
-            }).AddIdentityProviderAuthentication("IdentityProvider", "d.velop Identity Provider", options => { });
+            }).AddIdentityProviderAuthentication("IdentityProvider", "d.velop Identity Provider", options => {  });
             
             // Create and configure Mvc
             services.AddMvc(options =>
@@ -151,7 +151,7 @@ namespace Dvelop.Remote
                 },
                 LogCallback = (level, s) =>
                 {
-                    _logger.LogError($"TenantMiddleware: {level} ->  {s}" );
+                    _logger.LogDebug($"TenantMiddleware: {level} ->  {s}" );
                 }
             });
 
@@ -159,7 +159,6 @@ namespace Dvelop.Remote
             app.UseIdentityProvider(new IdentityProviderOptions
             {
                 BaseAddress = new Uri(Configuration["DEFAULT_SYSTEM_BASE_URI"]),
-                TriggerAuthentication = true,
                 HttpClient = new HttpClient(),
                 TenantInformationCallback = () =>
                 {
@@ -214,6 +213,7 @@ namespace Dvelop.Remote
                     new CultureInfo("en")
                 }
             });
+           
             
             app.UseMvc();
             
