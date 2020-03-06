@@ -264,3 +264,4 @@ outPrgFiles/
 dist/
 out/
 terraform/.terraform/
+login.ps1

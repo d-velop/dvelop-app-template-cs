@@ -79,6 +79,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "serverless_lambda_app", "se
 		terraform\modules\serverless_lambda_app\variables.tf = terraform\modules\serverless_lambda_app\variables.tf
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Remote.UnitTests", "Remote.UnitTests\Remote.UnitTests.csproj", "{5B1EDF76-0FBE-4277-BE8F-B05F7BE5EC55}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -117,6 +119,10 @@ Global
 		{8ECF03DF-BF72-4305-AEA2-8B6657E95C1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8ECF03DF-BF72-4305-AEA2-8B6657E95C1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8ECF03DF-BF72-4305-AEA2-8B6657E95C1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B1EDF76-0FBE-4277-BE8F-B05F7BE5EC55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B1EDF76-0FBE-4277-BE8F-B05F7BE5EC55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B1EDF76-0FBE-4277-BE8F-B05F7BE5EC55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B1EDF76-0FBE-4277-BE8F-B05F7BE5EC55}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
