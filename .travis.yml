@@ -2,6 +2,10 @@ language: csharp
 mono: none
 dotnet: 2.1.603
 
+services:
+  - docker
+before_install:
+  - docker build -t acme-template:latest ./buildcontainer
 script:
 - dotnet build
 - dotnet test
