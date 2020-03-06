@@ -1,9 +1,9 @@
 FROM microsoft/dotnet 
 
 WORKDIR /buildinternal
-
+# unzip, zip, python, build-essential (make, gcc and more) ...
 RUN apt-get update && \
-    apt-get -y --fix-missing install apt-utils curl rsync unzip zip python python-pip openssh-client git-core build-essential jq && \
+    apt-get -y --fix-missing install ca-certificates apt-utils curl rsync unzip zip python python-pip openssh-client git-core build-essential jq && \
     apt-get clean     
 RUN rm -rf /var/lib/apt/lists/*
 
@@ -35,19 +35,19 @@ RUN curl -fsSL https://releases.hashicorp.com/terraform-provider-template/${TERR
     echo "${TERRAFORM_TEMPLATE_PLUGIN_CHECKSUM} terraform_template_plugin.zip" | sha256sum -c - && \
     unzip terraform_template_plugin.zip -d /usr/local/lib/custom-terraform-plugins ; rm terraform_template_plugin.zip
 
-# terraform aws provider plugin
-ENV TERRAFORM_AWS_PLUGIN_VERSION 2.7.0
-ENV TERRAFORM_AWS_PLUGIN_CHECKSUM b2a046c82f38c1c9b89503be7d4b83049b1af445d11ea08a1b2b3196d510d02f
-RUN curl -fsSL https://releases.hashicorp.com/terraform-provider-aws/${TERRAFORM_AWS_PLUGIN_VERSION}/terraform-provider-aws_${TERRAFORM_AWS_PLUGIN_VERSION}_linux_amd64.zip -o terraform_aws_plugin.zip  && \
-    echo "${TERRAFORM_AWS_PLUGIN_CHECKSUM} terraform_aws_plugin.zip" | sha256sum -c - && \
-    unzip terraform_aws_plugin.zip -d /usr/local/lib/custom-terraform-plugins ; rm terraform_aws_plugin.zip
-
 # terraform null provider plugin
 ENV TERRAFORM_NULL_PLUGIN_VERSION 2.1.1
 ENV TERRAFORM_NULL_PLUGIN_CHECKSUM 5b29f6a87f4dae4dc295a43f499182221333dbe474fcf724b8ea98fd38cfb3e6
 RUN curl -fsSL https://releases.hashicorp.com/terraform-provider-null/${TERRAFORM_NULL_PLUGIN_VERSION}/terraform-provider-null_${TERRAFORM_NULL_PLUGIN_VERSION}_linux_amd64.zip -o terraform_null_plugin.zip  && \
     echo "${TERRAFORM_NULL_PLUGIN_CHECKSUM} terraform_null_plugin.zip" | sha256sum -c - && \
     unzip terraform_null_plugin.zip -d /usr/local/lib/custom-terraform-plugins ; rm terraform_null_plugin.zip
+
+# terraform aws provider plugin
+ENV TERRAFORM_AWS_PLUGIN_VERSION 2.23.0
+ENV TERRAFORM_AWS_PLUGIN_CHECKSUM 8076270dfd8d31edc8aa7092f68d3d97c03104b8e47f8e2399d8688b43476d5e
+RUN curl -fsSL https://releases.hashicorp.com/terraform-provider-aws/${TERRAFORM_AWS_PLUGIN_VERSION}/terraform-provider-aws_${TERRAFORM_AWS_PLUGIN_VERSION}_linux_amd64.zip -o terraform_aws_plugin.zip  && \
+    echo "${TERRAFORM_AWS_PLUGIN_CHECKSUM} terraform_aws_plugin.zip" | sha256sum -c - && \
+    unzip terraform_aws_plugin.zip -d /usr/local/lib/custom-terraform-plugins ; rm terraform_aws_plugin.zip
 
 # terraform archive provider plugin
 ENV TERRAFORM_ARCHIVE_PLUGIN_VERSION 1.1.0

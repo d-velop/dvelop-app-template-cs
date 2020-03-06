@@ -1,8 +1,10 @@
+using System;
 using Dvelop.Lambda.EntryPoint.DependencyInjection;
 using Dvelop.Remote;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Dvelop.Lambda.EntryPoint
 {
@@ -31,7 +33,17 @@ namespace Dvelop.Lambda.EntryPoint
                 .ConfigureServices( sc => 
                     sc.AddSingleton<ICustomServiceProviderFactory>(new AwsServiceProviderFactory()) 
                 )
-                .UseStartup<Startup>();
+                .ConfigureLogging((hostingContext, logging) =>
+                    {
+                     
+                        logging.AddLambdaLogger(new LambdaLoggerOptions
+                        {
+                            IncludeLogLevel = true,
+                            Filter = (category, logLevel) => true
+                        });
+                     
+                    })
+                    .UseStartup<Startup>();
         }
     }
 }
