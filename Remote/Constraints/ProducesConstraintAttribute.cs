@@ -43,7 +43,7 @@ namespace Dvelop.Remote.Constraints
                 .Cast<ProducesConstraintAttribute>();
 
             var any = actionConstrains
-                .Any(constraintAttribute => constraintAttribute.ContentTypes.Any(producesType => requestHeaders.Accept.Select(acceptFromHeader => acceptFromHeader.MediaType.Value).FirstOrDefault() == producesType));
+                .Any(constraintAttribute => constraintAttribute.ContentTypes.Any(producesType => requestHeaders.Accept?.Select(acceptFromHeader => acceptFromHeader.MediaType.Value).FirstOrDefault() == producesType));
 
             return any;
         }
