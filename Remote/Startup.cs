@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.AspNetCore.Routing;
@@ -66,6 +65,7 @@ namespace Dvelop.Remote
         {
             // Allow Classes to access the HttpContext
             services.AddHttpContextAccessor();
+            
             services.TryAddEnumerable(ServiceDescriptor.Singleton<MatcherPolicy, ProducesMatcherPolicy>());
             // Enable d.ecs IdentityProvider
             services.AddAuthentication(options =>
@@ -77,10 +77,15 @@ namespace Dvelop.Remote
             }).AddIdentityProviderAuthentication("IdentityProvider", "d.velop Identity Provider", options => {  });
             services.AddAuthorization(options =>
             {
+                // DefaultPolicy will be evaluated, if there is an [Authorize] attribute, but no configuration.
                 options.DefaultPolicy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .Build();
-                
+
+                // FallbackPolicy will be evaluated, if there is neither [Authorize] nor an [AllowAnonymous] attribute provided.
+                options.FallbackPolicy= new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
             });
             // Create and configure Mvc
             services.AddRazorPages()
@@ -133,7 +138,7 @@ namespace Dvelop.Remote
             
             // This will a a virtual path-segment to the application
             app.UsePathBase(Configuration["BASE"]);
-
+            
             // Enable Multi-Tenancy
             app.UseTenantMiddleware(new TenantMiddlewareOptions
             {
@@ -216,9 +221,11 @@ namespace Dvelop.Remote
 
             app.UseRouting();
             app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute().RequireAuthorization();
+                endpoints.MapControllers(); // Map attribute-routed API controllers
                 endpoints.MapRazorPages();
             });
 
