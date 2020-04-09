@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Linq;
 using Dvelop.Domain.Vacation;
-using Dvelop.Remote.Constraints;
 using Dvelop.Remote.Controller.VacationRequest.Dto;
 using Dvelop.Remote.Controller.VacationRequest.ViewModel;
 using Dvelop.Sdk.Base.Dto;
@@ -15,7 +14,7 @@ namespace Dvelop.Remote.Controller.VacationRequest
     /// Example for a controller using business logic and Views
     /// </summary>
     [Route("")]
-    
+    [AllowAnonymous]
     public class VacationRequestController : Microsoft.AspNetCore.Mvc.Controller
     {
         private readonly IVacationService _service;
@@ -26,7 +25,7 @@ namespace Dvelop.Remote.Controller.VacationRequest
             _service = service;
         }
         
-        [ProducesConstraint("application/json", "application/hal+json")]
+        [Produces("application/json", "application/hal+json")]
         [HttpGet("vacationrequest", Name = nameof(VacationRequestController) + "." +nameof(GetVacationList))]
         public VacationRequestListDto GetVacationList()
         {
@@ -51,7 +50,7 @@ namespace Dvelop.Remote.Controller.VacationRequest
             return dto;
         }
         
-        [ProducesConstraint("text/html")]
+        [Produces("text/html")]
         [HttpGet("vacationrequest", Name = nameof(VacationRequestController) + "." +nameof(GetVacationListView))]
         public ActionResult GetVacationListView()
         {
@@ -77,7 +76,7 @@ namespace Dvelop.Remote.Controller.VacationRequest
 
 
         
-        [ProducesConstraint("application/json", "application/hal+json")]
+        [Produces("application/json", "application/hal+json")]
         [HttpGet("vacationrequest/{id}", Name = nameof(VacationRequestController) + "." + nameof(GetVacation))]
         public VacationRequestDto GetVacation(string id)
         {
@@ -100,7 +99,7 @@ namespace Dvelop.Remote.Controller.VacationRequest
             return dto;
         }
 
-        [ProducesConstraint("text/html")]
+        [Produces("text/html")]
         [HttpGet("vacationrequest/{id}", Name = nameof(VacationRequestController) + "." + nameof(GetVacationView))]
         public ActionResult GetVacationView(string id)
         {
@@ -129,7 +128,7 @@ namespace Dvelop.Remote.Controller.VacationRequest
             return View("VacationRequest", vacationRequestView);
         }
 
-        [ProducesConstraint("text/html")]
+        [Produces("text/html")]
         [HttpGet("vacationrequestform", Name = nameof(VacationRequestController) + "." + nameof(GetVacationFormView))]
         public ActionResult GetVacationFormView(string id)
         {

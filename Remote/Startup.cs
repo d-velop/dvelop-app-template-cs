@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using Dvelop.Sdk.TenantMiddleware;
 using Dvelop.Domain.Repositories;
-using Dvelop.Remote.Formatter;
+using Dvelop.Remote.Constraints;
 using Dvelop.Sdk.IdentityProvider.Client;
 using Dvelop.Sdk.IdentityProvider.Middleware;
 using Microsoft.AspNetCore.Authorization;
@@ -16,13 +16,17 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Rewrite;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Dvelop.Remote
 {
@@ -62,7 +66,7 @@ namespace Dvelop.Remote
         {
             // Allow Classes to access the HttpContext
             services.AddHttpContextAccessor();
-            
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<MatcherPolicy, ProducesMatcherPolicy>());
             // Enable d.ecs IdentityProvider
             services.AddAuthentication(options =>
             {
@@ -71,30 +75,25 @@ namespace Dvelop.Remote
                 options.DefaultForbidScheme = "IdentityProvider";
 
             }).AddIdentityProviderAuthentication("IdentityProvider", "d.velop Identity Provider", options => {  });
-            
+            services.AddAuthorization(options =>
+            {
+                options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                
+            });
             // Create and configure Mvc
-            services.AddMvc(options =>
-                    {
-                        // Enable Content Negotiation
-                        options.RespectBrowserAcceptHeader = true;
-
-                        // Remove Default Json Formatter
-                        options.OutputFormatters.RemoveType<JsonOutputFormatter>();
-
-                        // Insert HalJson Media-Formatter to allow serialization/deserialization of HypermediaApplicationLanguage
-                        options.OutputFormatters.Insert(0, new HalJsonOutputFormatter());
-                        
-                        // Only Allow Authenticated User to access this application (Use [AllowAnonymous] to allow anonymous access)
-                        var policy = new AuthorizationPolicyBuilder()
-                            .RequireAuthenticatedUser()
-                            .Build();
-                        options.Filters.Add(new AuthorizeFilter(policy));
-                    })
-                .AddRazorPagesOptions(options => 
-                    {
-                        options.Conventions.AllowAnonymousToPage("/Error");
-                    })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1); // Should be set to 2.1 compatibility
+            services.AddRazorPages()
+                .AddRazorPagesOptions(options => { options.Conventions.AllowAnonymousToPage("/Error"); })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0).AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Include;
+                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                    
+                })
+               ;
             services.AddDirectoryBrowser();
             services.AddLogging(loggingBuilder => loggingBuilder.SetMinimumLevel(LogLevel.Information));
             services.AddRouting(routeOptions => routeOptions.AppendTrailingSlash = true );
@@ -102,7 +101,7 @@ namespace Dvelop.Remote
         }
 
         // This method gets called by the ASP .NET core runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IActionDescriptorCollectionProvider  actionDescriptorProvider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IActionDescriptorCollectionProvider  actionDescriptorProvider)
         {
             // Print information about bound routes and the Controller, they are bound to.
             var routes = actionDescriptorProvider.ActionDescriptors.Items.Where(ad => ad.AttributeRouteInfo != null).ToList();
@@ -213,10 +212,16 @@ namespace Dvelop.Remote
                     new CultureInfo("en")
                 }
             });
-           
-            
-            app.UseMvc();
-            
+
+
+            app.UseRouting();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDefaultControllerRoute().RequireAuthorization();
+                endpoints.MapRazorPages();
+            });
+
             if (!string.IsNullOrWhiteSpace(Configuration["ASSET_BASE_PATH"]))
             {
                 return;

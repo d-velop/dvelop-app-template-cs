@@ -1,5 +1,4 @@
 ﻿using Dvelop.Domain.VersionService;
-using Dvelop.Remote.Constraints;
 using Dvelop.Remote.Controller.ConfigFeature;
 using Dvelop.Remote.Controller.HomeFeature;
 using Dvelop.Remote.Controller.Root.Dto;
@@ -28,7 +27,7 @@ namespace Dvelop.Remote.Controller.Root
         /// Returns a html-representation
         /// </summary>
         /// <returns>Version of this product</returns>
-        [ProducesConstraint("application/json","application/hal+json")]
+        [Produces("application/json","application/hal+json")]
         [HttpGet(Name = nameof(RootController)+"."+nameof(GetJson))] 
         public RootDto GetJson()
         {
@@ -55,7 +54,7 @@ namespace Dvelop.Remote.Controller.Root
         /// Returns a html-representation
         /// </summary>
         /// <returns>Version of this product</returns>
-        [ProducesConstraint("text/html")]
+        [Produces("text/html")]
         [HttpGet(Name = nameof(RootController)+"."+nameof(GetHtml))] 
         public ActionResult GetHtml()
         {

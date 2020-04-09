@@ -30,7 +30,7 @@ module "serverless_lambda_app" {
   # If you change your output file names or namespaces, you will have to edit the next line
   # <binary>::<name-space>.<class>::<function>
   lambda_handler      = "EntryPoint::Dvelop.Lambda.EntryPoint.LambdaEntryPoint::FunctionHandlerAsync"
-  lambda_runtime      = "dotnetcore2.1"
+  lambda_runtime      = "dotnetcore3.1"
   assets_bucket_name = "${local.assets_bucket_name}"
 
   # Which rights should the lambda function have.
