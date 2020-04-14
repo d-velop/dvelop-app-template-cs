@@ -45,7 +45,7 @@ RUN curl -fsSL https://releases.hashicorp.com/terraform-provider-template/${TERR
 
 # terraform aws provider plugin
 ENV TERRAFORM_AWS_PLUGIN_VERSION 2.57.0 
-ENV TERRAFORM_AWS_PLUGIN_CHECKSUM 14752329e73c68b63b68f971caaaf5248ceea9f2cdc166b3897d46ce96f25548
+ENV TERRAFORM_AWS_PLUGIN_CHECKSUM c58da1769a6b4e01764ad1e3a9357a3f42b56a2fa95c66899270e31836da7529
 RUN curl -fsSL https://releases.hashicorp.com/terraform-provider-aws/${TERRAFORM_AWS_PLUGIN_VERSION}/terraform-provider-aws_${TERRAFORM_AWS_PLUGIN_VERSION}_linux_amd64.zip -o terraform_aws_plugin.zip  && \
     echo "${TERRAFORM_AWS_PLUGIN_CHECKSUM} terraform_aws_plugin.zip" | sha256sum -c - && \
     unzip terraform_aws_plugin.zip -d /usr/local/lib/custom-terraform-plugins ; rm terraform_aws_plugin.zip
