@@ -36,8 +36,8 @@ build-app: generate test
 
 build-lambda: generate test
 	echo "Building lambda..."
-	dotnet publish -c Release ./AwsLambda/Entrypoint/EntryPoint.csproj
-	cd /buildinternal/AwsLambda/Entrypoint/bin/Release/netcoreapp3.1/publish/ && \
+	dotnet publish -r linux-x64 --self-contained false -c Release ./AwsLambda/Entrypoint/EntryPoint.csproj
+	cd /buildinternal/AwsLambda/Entrypoint/bin/Release/netcoreapp3.1/linux-x64/publish/ && \
 		echo "Creating lambda.zip from: " && \
 		zip -x wwwroot\* -r /build/dist/lambda.zip .
 

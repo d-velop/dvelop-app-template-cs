@@ -1,4 +1,5 @@
 using System;
+using Amazon.Lambda.Core;
 using Dvelop.Lambda.EntryPoint.DependencyInjection;
 using Dvelop.Remote;
 using Microsoft.AspNetCore.Hosting;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
+[assembly:LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.LambdaJsonSerializer))]
 namespace Dvelop.Lambda.EntryPoint
 {
     /// <summary>
