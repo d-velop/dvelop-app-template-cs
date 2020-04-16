@@ -26,7 +26,6 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-
 namespace Dvelop.Remote
 {
     public class Startup
@@ -96,8 +95,8 @@ namespace Dvelop.Remote
                     options.JsonSerializerOptions.IgnoreNullValues = true;
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-                })
-                /*
+                });
+                /* If you want to switch back to NewtonSoftJson, use to following settings
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Include;
@@ -106,7 +105,6 @@ namespace Dvelop.Remote
                     options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
                 })*/
                 
-               ;
             services.AddDirectoryBrowser();
             services.AddLogging(loggingBuilder => loggingBuilder.SetMinimumLevel(LogLevel.Information));
             services.AddRouting(routeOptions => routeOptions.AppendTrailingSlash = true );
