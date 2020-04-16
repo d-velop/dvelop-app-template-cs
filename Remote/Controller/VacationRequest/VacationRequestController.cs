@@ -14,7 +14,7 @@ namespace Dvelop.Remote.Controller.VacationRequest
     /// Example for a controller using business logic and Views
     /// </summary>
     [Route("")]
-    
+    [AllowAnonymous]
     public class VacationRequestController : Microsoft.AspNetCore.Mvc.Controller
     {
         private readonly IVacationService _service;
