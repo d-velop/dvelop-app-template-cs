@@ -267,3 +267,4 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 
 Please read [LICENSE](LICENSE) for licensing information.
 
+[![Build Status](https://travis-ci.com/d-velop/dvelop-app-template-cs.svg?branch=master)](https://travis-ci.com/d-velop/dvelop-app-template-cs)

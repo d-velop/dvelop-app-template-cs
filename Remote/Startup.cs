@@ -4,9 +4,10 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using Dvelop.Sdk.TenantMiddleware;
 using Dvelop.Domain.Repositories;
-using Dvelop.Remote.Formatter;
+using Dvelop.Remote.Constraints;
 using Dvelop.Sdk.IdentityProvider.Client;
 using Dvelop.Sdk.IdentityProvider.Middleware;
 using Microsoft.AspNetCore.Authorization;
@@ -15,13 +16,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Rewrite;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Dvelop.Remote
@@ -63,6 +65,7 @@ namespace Dvelop.Remote
             // Allow Classes to access the HttpContext
             services.AddHttpContextAccessor();
             
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<MatcherPolicy, ProducesMatcherPolicy>());
             // Enable d.ecs IdentityProvider
             services.AddAuthentication(options =>
             {
@@ -71,30 +74,37 @@ namespace Dvelop.Remote
                 options.DefaultForbidScheme = "IdentityProvider";
 
             }).AddIdentityProviderAuthentication("IdentityProvider", "d.velop Identity Provider", options => {  });
-            
+            services.AddAuthorization(options =>
+            {
+                // DefaultPolicy will be evaluated, if there is an [Authorize] attribute, but no configuration.
+                options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+
+                // FallbackPolicy will be evaluated, if there is neither [Authorize] nor an [AllowAnonymous] attribute provided.
+                options.FallbackPolicy= new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+            });
             // Create and configure Mvc
-            services.AddMvc(options =>
-                    {
-                        // Enable Content Negotiation
-                        options.RespectBrowserAcceptHeader = true;
-
-                        // Remove Default Json Formatter
-                        options.OutputFormatters.RemoveType<JsonOutputFormatter>();
-
-                        // Insert HalJson Media-Formatter to allow serialization/deserialization of HypermediaApplicationLanguage
-                        options.OutputFormatters.Insert(0, new HalJsonOutputFormatter());
-                        
-                        // Only Allow Authenticated User to access this application (Use [AllowAnonymous] to allow anonymous access)
-                        var policy = new AuthorizationPolicyBuilder()
-                            .RequireAuthenticatedUser()
-                            .Build();
-                        options.Filters.Add(new AuthorizeFilter(policy));
-                    })
-                .AddRazorPagesOptions(options => 
-                    {
-                        options.Conventions.AllowAnonymousToPage("/Error");
-                    })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1); // Should be set to 2.1 compatibility
+            services.AddRazorPages()
+                .AddRazorPagesOptions(options => { options.Conventions.AllowAnonymousToPage("/Error"); })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.IgnoreNullValues = true;
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                });
+                /* If you want to switch back to NewtonSoftJson, use to following settings
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Include;
+                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                })*/
+                
             services.AddDirectoryBrowser();
             services.AddLogging(loggingBuilder => loggingBuilder.SetMinimumLevel(LogLevel.Information));
             services.AddRouting(routeOptions => routeOptions.AppendTrailingSlash = true );
@@ -102,7 +112,7 @@ namespace Dvelop.Remote
         }
 
         // This method gets called by the ASP .NET core runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IActionDescriptorCollectionProvider  actionDescriptorProvider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IActionDescriptorCollectionProvider  actionDescriptorProvider)
         {
             // Print information about bound routes and the Controller, they are bound to.
             var routes = actionDescriptorProvider.ActionDescriptors.Items.Where(ad => ad.AttributeRouteInfo != null).ToList();
@@ -134,7 +144,7 @@ namespace Dvelop.Remote
             
             // This will a a virtual path-segment to the application
             app.UsePathBase(Configuration["BASE"]);
-
+            
             // Enable Multi-Tenancy
             app.UseTenantMiddleware(new TenantMiddlewareOptions
             {
@@ -213,10 +223,18 @@ namespace Dvelop.Remote
                     new CultureInfo("en")
                 }
             });
-           
-            
-            app.UseMvc();
-            
+
+
+            app.UseRouting();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDefaultControllerRoute().RequireAuthorization();
+                endpoints.MapControllers(); // Map attribute-routed API controllers
+                endpoints.MapRazorPages();
+            });
+
             if (!string.IsNullOrWhiteSpace(Configuration["ASSET_BASE_PATH"]))
             {
                 return;

@@ -6,7 +6,6 @@
 			<PackageReference Include="Dvelop.Sdk.Home.Dto" Version="0.0.1.43" />
 			<PackageReference Include="Dvelop.Sdk.IdentityProvider.Middleware" Version="0.0.1.43" />
 			<PackageReference Include="Dvelop.Sdk.TenantMiddleware" Version="0.0.1.43" />
-			<PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.5" />
 	 </ItemGroup>
 	
 	 <ItemGroup>
@@ -35,11 +34,12 @@
 	 </ItemGroup>
 	
 	 <ItemGroup>
+	   <Folder Include="Formatter" />
 	   <Folder Include="Properties\" />
 	 </ItemGroup>
 
 	<PropertyGroup>
-		<TargetFramework>netcoreapp2.1</TargetFramework>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
 		<ApplicationIcon />
 		<OutputType>Library</OutputType>
 		<RootNamespace>Dvelop.Remote</RootNamespace>
