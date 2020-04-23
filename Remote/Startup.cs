@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.AspNetCore.Routing;
@@ -62,9 +63,10 @@ namespace Dvelop.Remote
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<DvSignatureFilter>();
+            
             // Allow Classes to access the HttpContext
             services.AddHttpContextAccessor();
-            
             services.TryAddEnumerable(ServiceDescriptor.Singleton<MatcherPolicy, ProducesMatcherPolicy>());
             // Enable d.ecs IdentityProvider
             services.AddAuthentication(options =>
@@ -158,13 +160,8 @@ namespace Dvelop.Remote
                     var tenantRepository = app.ApplicationServices.GetService<ITenantRepository>();
                     tenantRepository.SystemBaseUri = new Uri(systemBaseUri);
                     tenantRepository.TenantId = tenantId;
-                },
-                LogCallback = (level, s) =>
-                {
-                    _logger.LogDebug($"TenantMiddleware: {level} ->  {s}" );
                 }
             });
-
             // Enable d.ecs IdentityProvider
             app.UseIdentityProvider(new IdentityProviderOptions
             {
@@ -272,3 +269,5 @@ namespace Dvelop.Remote
         IServiceProvider CreateServiceProvider(IServiceCollection services);
     }
 }
+
+

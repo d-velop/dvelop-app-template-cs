@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Dvelop.Remote.Controller.Root
 {
-    [AllowAnonymous]        // Allows anonymous requests (for getting version information and /home-App features)
+    [AllowAnonymous]         // Allows anonymous requests (for getting version information and /home-App features)
     [Route("")]     // Binds to configured root route
     public class RootController: Microsoft.AspNetCore.Mvc.Controller
     {
