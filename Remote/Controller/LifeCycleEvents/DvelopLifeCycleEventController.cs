@@ -1,4 +1,5 @@
 using Dvelop.Remote.Constraints;
+using Dvelop.SDK.CloudCenter.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -20,12 +21,5 @@ namespace Dvelop.Remote.Controller.LifeCycleEvents
             _log.LogInformation( $"Got Event {eventDto?.Type} for {eventDto?.TenantId} -> {eventDto?.BaseUri}" );
             return new OkResult();
         }
-    }
-
-    public class CloudCenterEventDto
-    {
-        public string Type { get; set; }
-        public string TenantId { get; set; }
-        public string BaseUri { get; set; }
     }
 }

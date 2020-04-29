@@ -14,9 +14,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.AspNetCore.Routing;
@@ -31,6 +31,8 @@ namespace Dvelop.Remote
 {
     public class Startup
     {
+        private IConfiguration Configuration { get; }
+        
         private readonly ICustomServiceProviderFactory _factory;
 
         private readonly ILogger<Startup> _logger;
@@ -58,11 +60,12 @@ namespace Dvelop.Remote
             _logger.LogInformation($"BASE: {Configuration["BASE"]}");
         }
 
-        public IConfiguration Configuration { get; }
+        
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            // Add Filter for DvSignature
             services.AddScoped<DvSignatureFilter>();
             
             // Allow Classes to access the HttpContext
@@ -135,13 +138,18 @@ namespace Dvelop.Remote
                 .Add(rc =>
                     {
                         var oldPathBase = rc.HttpContext.Request.PathBase;
+                        
+                        rc.HttpContext.Items.Add("OriginalPath", new Uri(rc.HttpContext.Request.GetDisplayUrl(), UriKind.RelativeOrAbsolute).AbsolutePath);
+                        
                         rc.HttpContext.Request.PathBase = "";
-                        _logger.LogDebug($"Changed PathBase from '{oldPathBase}' to '{rc.HttpContext.Request.PathBase}'");
+                        
+                        
+                        _logger.LogInformation($"Changed PathBase from '{oldPathBase}' to '{rc.HttpContext.Request.PathBase}'");
                         rc.Result = RuleResult.ContinueRules;
                     })
 
                 // This redirect ensures, that a URL is always used with an trailing '/', expect in the last segment ist a '.'.
-                .AddRedirect(@"^(((.*/)|(/?))[^/.]+(?!/$))$", "$1/",302)
+                // .AddRedirect(@"^(((.*/)|(/?))[^/.]+(?!/$))$", "$1/",302)
             );
             
             // This will a a virtual path-segment to the application
