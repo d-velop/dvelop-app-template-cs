@@ -1,13 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 	
 	 <ItemGroup>
-			<PackageReference Include="Dvelop.Sdk.Base.Dto" Version="0.0.2.53-prerelease" />
-			<PackageReference Include="Dvelop.Sdk.CloudCenter.Dto" Version="0.0.2-alpha" />
-			<PackageReference Include="Dvelop.Sdk.Config.Dto" Version="0.0.2.53-prerelease" />
-			<PackageReference Include="Dvelop.Sdk.Home.Dto" Version="0.0.2.53-prerelease" />
-			<PackageReference Include="Dvelop.Sdk.IdentityProvider.Middleware" Version="0.0.2-alpha" />
-			<PackageReference Include="Dvelop.Sdk.SigningAlgorithms" Version="0.0.2-alpha" />
-			<PackageReference Include="Dvelop.Sdk.TenantMiddleware" Version="0.0.2-alpha" />
+			<PackageReference Include="Dvelop.Sdk.Base.Dto" Version="0.0.2.69-prerelease" />
+			<PackageReference Include="Dvelop.Sdk.CloudCenter.Dto" Version="0.0.2.69-prerelease" />
+			<PackageReference Include="Dvelop.Sdk.Config.Dto" Version="0.0.2.69-prerelease" />
+			<PackageReference Include="Dvelop.Sdk.Home.Dto" Version="0.0.2.69-prerelease" />
+			<PackageReference Include="Dvelop.Sdk.IdentityProvider.Middleware" Version="0.0.2.69-prerelease" />
+			<PackageReference Include="Dvelop.Sdk.SigningAlgorithms" Version="0.0.2.69-prerelease" />
+			<PackageReference Include="Dvelop.Sdk.TenantMiddleware" Version="0.0.2.69-prerelease" />
+			<PackageReference Include="Dvelop.Sdk.WebApiExtensions" Version="0.0.2.69-prerelease" />
 	 </ItemGroup>
 	
 	 <ItemGroup>

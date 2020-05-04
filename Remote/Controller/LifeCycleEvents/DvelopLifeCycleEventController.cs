@@ -1,11 +1,11 @@
-using Dvelop.Remote.Constraints;
-using Dvelop.SDK.CloudCenter.Dto;
+using Dvelop.Remote.Filter;
+using Dvelop.Sdk.CloudCenter.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Dvelop.Remote.Controller.LifeCycleEvents
 {
-    [DvSignatureAuthentication]
+    [Dv1HmacSha256Signature]
     public class DvelopLifeCycleEventController: ControllerBase
     {
         private readonly ILogger<DvelopLifeCycleEventController> _log;
