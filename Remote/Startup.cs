@@ -8,12 +8,16 @@ using System.Text.Json;
 using Dvelop.Sdk.TenantMiddleware;
 using Dvelop.Domain.Repositories;
 using Dvelop.Remote.Constraints;
+using Dvelop.Remote.Filter;
 using Dvelop.Sdk.IdentityProvider.Client;
 using Dvelop.Sdk.IdentityProvider.Middleware;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -26,10 +30,13 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
+
 namespace Dvelop.Remote
 {
     public class Startup
     {
+        private IConfiguration Configuration { get; }
+        
         private readonly ICustomServiceProviderFactory _factory;
 
         private readonly ILogger<Startup> _logger;
@@ -57,14 +64,17 @@ namespace Dvelop.Remote
             _logger.LogInformation($"BASE: {Configuration["BASE"]}");
         }
 
-        public IConfiguration Configuration { get; }
+        
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            
+            // Add Filter for DvSignature
+            services.AddScoped<Dv1HmacSha256SignatureFilter>();
+            
             // Allow Classes to access the HttpContext
             services.AddHttpContextAccessor();
-            
             services.TryAddEnumerable(ServiceDescriptor.Singleton<MatcherPolicy, ProducesMatcherPolicy>());
             // Enable d.ecs IdentityProvider
             services.AddAuthentication(options =>
@@ -86,9 +96,13 @@ namespace Dvelop.Remote
                     .RequireAuthenticatedUser()
                     .Build();
             });
-            // Create and configure Mvc
+            // Create and configure Mvc/Razor
             services.AddRazorPages()
-                .AddRazorPagesOptions(options => { options.Conventions.AllowAnonymousToPage("/Error"); })
+                .AddMvcOptions(options => options.RespectBrowserAcceptHeader = true)
+                .AddRazorPagesOptions(options =>
+                {
+                    options.Conventions.AllowAnonymousToPage("/Error");
+                })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddJsonOptions(options =>
                 {
@@ -133,13 +147,19 @@ namespace Dvelop.Remote
                 .Add(rc =>
                     {
                         var oldPathBase = rc.HttpContext.Request.PathBase;
+                        
+                        // Set the RawTarget, because in an AWS Lambda it is not available (yet)
+                        // See: https://github.com/aws/aws-lambda-dotnet/issues/656
+                        var requestFeature = rc.HttpContext.Features.Get<IHttpRequestFeature>();
+                        requestFeature.RawTarget ??= rc.HttpContext.Request.GetEncodedPathAndQuery();
+                        
                         rc.HttpContext.Request.PathBase = "";
-                        _logger.LogDebug($"Changed PathBase from '{oldPathBase}' to '{rc.HttpContext.Request.PathBase}'");
+                        _logger.LogInformation($"Changed PathBase from '{oldPathBase}' to '{rc.HttpContext.Request.PathBase}'");
                         rc.Result = RuleResult.ContinueRules;
                     })
 
                 // This redirect ensures, that a URL is always used with an trailing '/', expect in the last segment ist a '.'.
-                .AddRedirect(@"^(((.*/)|(/?))[^/.]+(?!/$))$", "$1/",302)
+                // .AddRedirect(@"^(((.*/)|(/?))[^/.]+(?!/$))$", "$1/",302)
             );
             
             // This will a a virtual path-segment to the application
@@ -158,13 +178,8 @@ namespace Dvelop.Remote
                     var tenantRepository = app.ApplicationServices.GetService<ITenantRepository>();
                     tenantRepository.SystemBaseUri = new Uri(systemBaseUri);
                     tenantRepository.TenantId = tenantId;
-                },
-                LogCallback = (level, s) =>
-                {
-                    _logger.LogDebug($"TenantMiddleware: {level} ->  {s}" );
                 }
             });
-
             // Enable d.ecs IdentityProvider
             app.UseIdentityProvider(new IdentityProviderOptions
             {
@@ -272,3 +287,5 @@ namespace Dvelop.Remote
         IServiceProvider CreateServiceProvider(IServiceCollection services);
     }
 }
+
+
