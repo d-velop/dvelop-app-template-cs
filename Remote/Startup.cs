@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -67,7 +68,7 @@ namespace Dvelop.Remote
         
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             
             // Add Filter for DvSignature
@@ -122,7 +123,7 @@ namespace Dvelop.Remote
             services.AddDirectoryBrowser();
             services.AddLogging(loggingBuilder => loggingBuilder.SetMinimumLevel(LogLevel.Information));
             services.AddRouting(routeOptions => routeOptions.AppendTrailingSlash = true );
-            return _factory.CreateServiceProvider(services);
+            _factory.CreateServiceProvider(services);
         }
 
         // This method gets called by the ASP .NET core runtime. Use this method to configure the HTTP request pipeline.

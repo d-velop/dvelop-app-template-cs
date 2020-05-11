@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Dvelop.Lambda.EntryPoint.DependencyInjection
 {
-    public class AwsServiceProviderFactory: ICustomServiceProviderFactory
+    public class CustomServiceProviderFactory: ICustomServiceProviderFactory
     {
         public IServiceProvider CreateServiceProvider(IServiceCollection services)
         {
