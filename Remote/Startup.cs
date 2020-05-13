@@ -73,6 +73,10 @@ namespace Dvelop.Remote
             // Add Filter for DvSignature
             services.AddScoped<Dv1HmacSha256SignatureFilter>();
             
+            // Add HttpClientService
+            services.AddHttpClient();
+            services.AddHttpClient("test");
+            
             // Allow Classes to access the HttpContext
             services.AddHttpContextAccessor();
             services.TryAddEnumerable(ServiceDescriptor.Singleton<MatcherPolicy, ProducesMatcherPolicy>());
