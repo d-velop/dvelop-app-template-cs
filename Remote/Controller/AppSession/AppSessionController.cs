@@ -14,8 +14,8 @@ using Newtonsoft.Json.Serialization;
 namespace Dvelop.Remote.Controller.AppSession
 {
     [AllowAnonymous]
-    [Route("appsession")]
-    public class AppSessionController : ControllerBase
+    [Route("")]
+    public class AppSessionController  : Microsoft.AspNetCore.Mvc.Controller
     {
         private readonly IConfiguration _configuration;
         private readonly ITenantRepository _tenantRepository;
@@ -33,15 +33,19 @@ namespace Dvelop.Remote.Controller.AppSession
             _log = factory.CreateLogger<AppSessionController>();
         }
         
-        [HttpGet(Name = nameof(AppSessionController) + "." + nameof(CreateAppSession))]
+        [AllowAnonymous]
+        [HttpGet("appsession", Name = nameof(AppSessionController) + "." + nameof(CreateAppSession))]
         public async Task<IActionResult> CreateAppSession()
         {
             var requestId = Guid.NewGuid().ToString("N");
+
+            var route = Url.RouteUrl(nameof(AppSessionController) + "." + nameof(Callback), new {requestId});
+            
             var appSessionRequestDto = new AppSessionRequestDto
             {
                 RequestId = HmacSha256Algorithm.HmacSha256( Convert.FromBase64String(_configuration["SIGNATURE_SECRET"]), requestId),
                 AppName = _configuration["APP_NAME"],
-                Callback = new Uri(Url.RouteUrl($"{nameof(AppSessionController)}.{nameof(Callback)}") + "/" +requestId, UriKind.Relative)
+                Callback = new Uri( route , UriKind.Relative)
             };
             
             var request = new HttpRequestMessage(HttpMethod.Post, new Uri(_tenantRepository.SystemBaseUri, "/identityprovider/appsession"))
@@ -57,10 +61,7 @@ namespace Dvelop.Remote.Controller.AppSession
                         }), Encoding.UTF8, "application/json"),
             };
             request.Headers.Add("Origin", _tenantRepository.SystemBaseUri.ToString().TrimEnd('/'));
-            request.Headers.Add("Referer", _tenantRepository.SystemBaseUri.ToString().TrimEnd('/'));
-            request.Headers.Add("Accept", "application/json");
-            // request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _user.CurrentUser.DvBearer);
-            
+
             var response = await _client.SendAsync(request);
               
             if (response.IsSuccessStatusCode)
@@ -70,16 +71,29 @@ namespace Dvelop.Remote.Controller.AppSession
             return StatusCode((int) response.StatusCode, response.ReasonPhrase);
         }
         
-        
-        [HttpPost(Name = nameof(AppSessionController) + "." + nameof(Callback))]
-        [Route( "callback/{requestId}/")]
+        [AllowAnonymous]
+        [HttpPost( "appsession/callback/{requestId}/", Name = nameof(AppSessionController) + "." + nameof(Callback))]
         public IActionResult Callback(string requestId, [FromBody] AppSessionCallbackDto callback)
         {
-            _log.LogInformation("Sign: " + callback.Sign );
-            _log.LogInformation( "AppSessionId:" +callback.AppSessionId );
-            _log.LogInformation( "Expire: "+callback.Expire.ToString("O"));
-            _log.LogInformation( "RequestId" + requestId );
-            return Ok(new StringContent(callback.AppSessionId));
+            _log.LogInformation( "Sign: " + callback.Sign );
+            _log.LogInformation( "AppSessionId:" +callback.AuthSessionId );
+            _log.LogInformation( "Expire: "+callback.Expire);
+            _log.LogInformation( "RequestId: " + requestId );
+            var hashedRequestId =  HmacSha256Algorithm.HmacSha256(Convert.FromBase64String(_configuration["SIGNATURE_SECRET"]), requestId);
+            var mySign = HmacSha256Algorithm.Sha256(
+                $"{_configuration["APP_NAME"]}{callback.AuthSessionId}{callback.Expire}{hashedRequestId}");
+            
+            // Hex(Sha256(<appname><authSessionId><expire><requestid>
+            
+            _log.LogInformation($"sign valid? {mySign==callback.Sign}");
+            if (mySign == callback.Sign)
+            {
+                return Ok(new StringContent(callback.AuthSessionId));
+            }
+            else
+            {
+                return BadRequest("Sign mismatch");
+            }
         }
     }
 
@@ -100,8 +114,8 @@ namespace Dvelop.Remote.Controller.AppSession
     
     public class AppSessionCallbackDto
     {
-        public string AppSessionId { get; set; }
-        public DateTimeOffset Expire { get; set; }
+        public string AuthSessionId { get; set; }
+        public string Expire { get; set; }
         public string Sign { get; set; }
     }
 }
