@@ -5,6 +5,7 @@
 			<PackageReference Include="Dvelop.Sdk.CloudCenter.Dto" Version="0.0.3.71" />
 			<PackageReference Include="Dvelop.Sdk.Config.Dto" Version="0.0.3.71" />
 			<PackageReference Include="Dvelop.Sdk.Home.Dto" Version="0.0.3.71" />
+			<PackageReference Include="Dvelop.Sdk.IdentityProvider.Client" Version="0.0.4.2-alpha1" />
 			<PackageReference Include="Dvelop.Sdk.IdentityProvider.Middleware" Version="0.0.3.71" />
 			<PackageReference Include="Dvelop.Sdk.SigningAlgorithms" Version="0.0.3.71" />
 			<PackageReference Include="Dvelop.Sdk.TenantMiddleware" Version="0.0.3.71" />
