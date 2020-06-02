@@ -46,6 +46,9 @@ module "serverless_lambda_app" {
 
     # change to ASSET_BASE_PATH  = "https://${module.asset_cdn.dns_name}/${var.asset_hash}" if asset_cdn is enabled
     ASSET_BASE_PATH = "https://s3-eu-central-1.amazonaws.com/${local.assets_bucket_name}/${var.asset_hash}"
+
+    # This should be removed in production
+    ASPNETCORE_ENVIRONMENT = "Development"
   }
 
   aws_region = "${var.aws_region}"

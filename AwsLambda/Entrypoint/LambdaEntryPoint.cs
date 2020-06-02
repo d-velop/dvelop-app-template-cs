@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 
 [assembly:LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.LambdaJsonSerializer))]
 namespace Dvelop.Lambda.EntryPoint
@@ -36,16 +37,28 @@ namespace Dvelop.Lambda.EntryPoint
                     sc.AddSingleton<ICustomServiceProviderFactory>(new AwsServiceProviderFactory()) 
                 )
                 .ConfigureLogging((hostingContext, logging) =>
+                {
+                    logging.ClearProviders();
+                    /*
+                    logging.AddConsole(options =>
                     {
-                     
+                        options.IncludeScopes = true;
+                        options.DisableColors = true;
+                        options.Format = ConsoleLoggerFormat.Default;
+                    });
+                    */
                         logging.AddLambdaLogger(new LambdaLoggerOptions
                         {
                             IncludeLogLevel = true,
-                            Filter = (category, logLevel) => true
+                            Filter = (category, logLevel) => true,
+                            IncludeException = true,
+                            IncludeNewline = false,
+                            IncludeEventId = false,
+                            IncludeCategory = true
                         });
                      
-                    })
-                    .UseStartup<Startup>();
+                })
+                .UseStartup<Startup>();
         }
     }
 }
