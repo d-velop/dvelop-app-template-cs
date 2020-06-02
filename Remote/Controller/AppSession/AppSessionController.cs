@@ -54,8 +54,8 @@ namespace Dvelop.Remote.Controller.AppSession
 
                 var contains = AppSessionStore.ContainsKey(_tenantRepository.TenantId);
                 
-                // This InMemory Store don't work in AWS lambda, 
-                return Ok(contains?"Take a look into your logs, the AppSession is logged there":"I already know the AppSession-Token");
+                // This InMemory Store don't work in AWS lambda
+                return Ok(contains?"I already know the AppSession-Token":"Take a look into your logs, the AppSession is logged there");
             }
             var requestId = Guid.NewGuid().ToString("N");
 
