@@ -25,3 +25,7 @@ output "stages" {
 output "function_name" {
   value = aws_lambda_function.service.function_name
 }
+
+output "function_version" {
+  value = element(aws_lambda_alias.alias.*.function_version, 0)
+}

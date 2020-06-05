@@ -3,7 +3,7 @@
 # cf. https://www.terraform.io/docs/backends/types/s3.html für eine Beschreibung des s3 backends
 terraform {
   backend "s3" {
-    key    = "state"
+    key = "state"
 
     # variables can't be used
     region = "eu-central-1"
@@ -23,8 +23,9 @@ data "terraform_remote_state" "app" {
   }
 
   defaults = {
-    source_code_hash = "0"
-    build_version    = "0"
+    source_code_hash            = "0"
+    build_version               = "0"
+    prod_service_lambda_version = "1"
   }
 }
 

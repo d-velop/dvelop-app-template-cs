@@ -68,6 +68,7 @@ plan: tf-init build-lambda asset_hash
 	-var 'domainsuffix=$(DOMAIN_SUFFIX)' \
 	-var 'asset_hash=$(ASSET_HASH)' \
 	-var 'system_prefix=$(SYSTEM_PREFIX)' \
+	-var 'tag_prod=$(TAG_PROD)' \
 	-out=$(PLAN)
 
 apply: plan
@@ -102,7 +103,7 @@ rename:
 
 destroy: tf-init
 	echo "destroy is disabled. Uncomment in Makefile to enable destroy."
-	#cd /build/terraform && terraform destroy -var 'signature_secret=$(SIGNATURE_SECRET)' -var 'build_version=$(build_version)' -var 'appname=$(APP_NAME)' -var 'domainsuffix=$(DOMAIN_SUFFIX)' -var 'system_prefix=$(SYSTEM_PREFIX)' -input=false -force
+	#cd /build/terraform && terraform destroy -var 'signature_secret=$(SIGNATURE_SECRET)' -var 'build_version=$(build_version)' -var 'appname=$(APP_NAME)' -var 'domainsuffix=$(DOMAIN_SUFFIX)' -var 'system_prefix=$(SYSTEM_PREFIX)' -var 'tag_prod=$(TAG_PROD)' -input=false -force
 
 dns: tf-init	
 	cd /build/terraform && terraform output -input=false -json | jq "{Domain: .domain.value, Nameserver: .nameserver.value}" > ../dist/dns-entry.json

@@ -33,3 +33,8 @@ variable "system_prefix" {
   description = "Prefix for urls and buckets to identify dev-account (e.g. 'dev-')"
   default     = ""
 }
+
+variable "tag_prod" {
+  description = "Set this variable to 1 to set the prod alias to the latest lambda function version"
+  default     = "0"
+}

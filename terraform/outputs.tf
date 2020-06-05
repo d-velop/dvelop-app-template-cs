@@ -14,3 +14,6 @@ output "domain" {
   value = "${var.system_prefix}${var.appname}${var.domainsuffix}"
 }
 
+output "prod_service_lambda_version" {
+  value = module.serverless_lambda_app.function_version
+}

@@ -11,7 +11,7 @@ locals {
   # If you add stages use keys which result in the stage appended at the end of the list!
   # If you are uncertain use terraform plan to check the changes terraform would make.
   stages = {
-    "a_prod" = "$LATEST"
+    "a_prod" = var.tag_prod == "1" ? "NewVersion" : data.terraform_remote_state.app.outputs.prod_service_lambda_version
     "b_dev"  = "$LATEST"
   }
 

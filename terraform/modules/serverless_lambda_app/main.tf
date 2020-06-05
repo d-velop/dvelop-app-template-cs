@@ -165,7 +165,7 @@ resource "aws_lambda_alias" "alias" {
     "",
   )}"
   function_name    = aws_lambda_function.service.arn
-  function_version = element(values(var.stages), count.index)
+  function_version = element(values(var.stages), count.index) == "NewVersion" ? aws_lambda_function.service.version : element(values(var.stages), count.index)
 }
 
 # cf. https://www.terraform.io/docs/providers/aws/r/api_gateway_deployment.html
