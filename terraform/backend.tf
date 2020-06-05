@@ -17,7 +17,7 @@ data "terraform_remote_state" "app" {
     # bucket names must be globally unique across all AWS customers
     # so we choose a combination of company prefix ('acme')
     # and purpose (terraform) and appname (apptemplatego)
-    bucket = "${var.system_prefix}acme-${var.appname}-terraform"
+    bucket = "${var.system_prefix}${var.appname}-terraform"
     key    = "state"
     region = var.aws_region
   }
