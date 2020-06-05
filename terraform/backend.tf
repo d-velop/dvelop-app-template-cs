@@ -17,19 +17,19 @@ terraform {
 data "terraform_remote_state" "app" {
   backend = "s3"
 
-  config {
+  config = {
     # bucket names must be globally unique across all AWS customers
     # so we choose a combination of company prefix ('acme')
     # and purpose (terraform) and appname (apptemplatego)
     bucket = "acme-apptemplatecs-terraform"
     key    = "state"
-
     # variables can't be used
     region = "eu-central-1"
   }
 
-  defaults {
+  defaults = {
     source_code_hash = "0"
     build_version    = "0"
   }
 }
+

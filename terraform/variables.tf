@@ -23,3 +23,4 @@ variable "appname" {
 variable "domainsuffix" {
   description = "dns suffix for the service endpoint"
 }
+
