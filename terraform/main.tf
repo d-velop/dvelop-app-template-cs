@@ -1,5 +1,5 @@
 locals {
-  assets_bucket_name = "assets.${var.appname}${var.domainsuffix}"
+  assets_bucket_name = "assets.${var.system_prefix}${var.appname}${var.domainsuffix}"
 
   lambda_file      = "../dist/lambda.zip"
   source_code_hash = filebase64sha256(local.lambda_file)
@@ -63,7 +63,7 @@ output "asset_base_path" {
 # cf. https://www.terraform.io/docs/providers/aws/d/route53_zone.html
 /*
 resource "aws_route53_zone" "hosted_zone" {
-  name = "${var.appname}${var.domainsuffix}"
+  name = "${var.system_prefix}${var.appname}${var.domainsuffix}"
 }
 output "nameserver" {
   value = aws_route53_zone.hosted_zone.name_servers
@@ -117,7 +117,7 @@ module "budget" {
 module "monitoring" {
   source    = "./modules/monitoring"
   sns_topic = aws_sns_topic.monitoring_topic.arn
-  
+
   lambda_function_names = [
     module.serverless_lambda_app.function_name
   ]

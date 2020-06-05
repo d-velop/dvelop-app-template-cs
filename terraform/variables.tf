@@ -28,3 +28,8 @@ variable "budget_amount" {
   description = "The amount of cost or usage being measured for a budget (in USD)."
   default     = "20.0"
 }
+
+variable "system_prefix" {
+  description = "Prefix for urls and buckets to identify dev-account (e.g. 'dev-')"
+  default     = ""
+}

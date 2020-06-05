@@ -11,6 +11,6 @@ output "endpoint" {
 }
 
 output "domain" {
-  value = "${var.appname}${var.domainsuffix}"
+  value = "${var.system_prefix}${var.appname}${var.domainsuffix}"
 }
 
