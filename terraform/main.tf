@@ -48,6 +48,7 @@ module "serverless_lambda_app" {
   }
 
   aws_region = var.aws_region
+  kms_key_id = module.encryption.encryption_key_id
 }
 
 # If you use cloudfront (a CDN) to deliver your assets, you should remember to remove  's3-eu-central-1.amazonaws.com/' from this output. 
@@ -125,4 +126,12 @@ module "monitoring" {
   api_names = [
     module.serverless_lambda_app.function_name
   ]
+}
+
+data "aws_caller_identity" "current" {}
+
+module "encryption" {
+  source    = "./modules/encryption"
+  appname   = var.appname
+  principal = data.aws_caller_identity.current.arn
 }

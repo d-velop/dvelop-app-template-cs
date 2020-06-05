@@ -57,3 +57,7 @@ variable "source_code_hash" {
   description = "Source code hash of the lambda function. New version will only be deployed if the hash changes between 2 deployments."
 }
 
+variable "kms_key_id" {
+  description = "Kms key to use to encrypt Cloudwatch logs"
+}
+

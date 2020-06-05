@@ -63,6 +63,7 @@ resource "aws_lambda_function" "service" {
 resource "aws_cloudwatch_log_group" "lambda" {
   name              = "/aws/lambda/${aws_lambda_function.service.function_name}"
   retention_in_days = 14
+  kms_key_id        = var.kms_key_id
 }
 
 # https://www.terraform.io/docs/providers/aws/r/iam_role.html
