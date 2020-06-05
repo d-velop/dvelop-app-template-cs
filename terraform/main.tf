@@ -101,3 +101,15 @@ module "api_custom_domains" {
   stages                                                = module.serverless_lambda_app.stages
 }
 */
+
+resource "aws_sns_topic" "monitoring_topic" {
+  name         = "${var.appname}-Monitoring"
+  display_name = "Monitoring for budget and cloudwatch alarms"
+}
+
+module "budget" {
+  source       = "./modules/budget"
+  limit_amount = var.budget_amount
+  appname      = var.appname
+  sns_topic    = aws_sns_topic.monitoring_topic.arn
+}

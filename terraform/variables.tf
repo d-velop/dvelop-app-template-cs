@@ -24,3 +24,7 @@ variable "domainsuffix" {
   description = "dns suffix for the service endpoint"
 }
 
+variable "budget_amount" {
+  description = "The amount of cost or usage being measured for a budget (in USD)."
+  default     = "20.0"
+}
