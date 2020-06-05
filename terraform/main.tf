@@ -113,3 +113,16 @@ module "budget" {
   appname      = var.appname
   sns_topic    = aws_sns_topic.monitoring_topic.arn
 }
+
+module "monitoring" {
+  source    = "./modules/monitoring"
+  sns_topic = aws_sns_topic.monitoring_topic.arn
+  
+  lambda_function_names = [
+    module.serverless_lambda_app.function_name
+  ]
+
+  api_names = [
+    module.serverless_lambda_app.function_name
+  ]
+}

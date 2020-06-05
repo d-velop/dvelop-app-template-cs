@@ -22,3 +22,6 @@ output "stages" {
   value = aws_api_gateway_deployment.deployment.*.stage_name
 }
 
+output "function_name" {
+  value = aws_lambda_function.service.function_name
+}
