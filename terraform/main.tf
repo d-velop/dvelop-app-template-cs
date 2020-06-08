@@ -103,6 +103,8 @@ module "api_custom_domains" {
 }
 */
 
+# If you want to be notified in case of budget overrun or Cloudwatch alarms, you need to subscribe to the SNS topic manually via the AWS Console
+# cf. https://www.terraform.io/docs/providers/aws/r/sns_topic.html
 resource "aws_sns_topic" "monitoring_topic" {
   name         = "${var.appname}-Monitoring"
   display_name = "Monitoring for budget and cloudwatch alarms"
@@ -128,6 +130,7 @@ module "monitoring" {
   ]
 }
 
+# cf. https://www.terraform.io/docs/providers/aws/d/caller_identity.html
 data "aws_caller_identity" "current" {}
 
 module "encryption" {
