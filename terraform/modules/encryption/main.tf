@@ -12,7 +12,7 @@ resource "aws_kms_key" "encryption_key" {
         "Sid": "Enable IAM User Permissions",
         "Effect": "Allow",
         "Principal": {
-            "AWS": "${var.principal}"
+            "AWS": "arn:aws:iam::${var.aws_account_id}:root"
         },
         "Action": "kms:*",
         "Resource": "*"

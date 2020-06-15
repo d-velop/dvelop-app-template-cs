@@ -136,5 +136,5 @@ data "aws_caller_identity" "current" {}
 module "encryption" {
   source    = "./modules/encryption"
   appname   = var.appname
-  principal = data.aws_caller_identity.current.arn
+  principal = data.aws_caller_identity.current.account_id
 }
