@@ -134,7 +134,7 @@ module "monitoring" {
 data "aws_caller_identity" "current" {}
 
 module "encryption" {
-  source    = "./modules/encryption"
-  appname   = var.appname
-  principal = data.aws_caller_identity.current.account_id
+  source         = "./modules/encryption"
+  appname        = var.appname
+  aws_account_id = data.aws_caller_identity.current.account_id
 }
