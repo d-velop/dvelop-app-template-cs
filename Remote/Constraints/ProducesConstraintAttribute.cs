@@ -37,14 +37,15 @@ namespace Dvelop.Remote.Constraints
         public override bool IsValidForRequest(RouteContext routeContext, ActionDescriptor action)
         {
             var requestHeaders = new RequestHeaders(routeContext.HttpContext.Request.Headers);
-
+                
             var actionConstrains = action.ActionConstraints
                 .Where(constraintMetadata => constraintMetadata.GetType() == typeof(ProducesConstraintAttribute))
                 .Cast<ProducesConstraintAttribute>();
-
-            var any = actionConstrains
-                .Any(constraintAttribute => constraintAttribute.ContentTypes.Any(producesType => requestHeaders.Accept?.Select(acceptFromHeader => acceptFromHeader.MediaType.Value).FirstOrDefault() == producesType));
-
+            
+            var any = actionConstrains.Any(constraintAttribute => constraintAttribute.ContentTypes.Any(
+                producesType => requestHeaders.Accept?.Any(acceptFromHeader => acceptFromHeader.MediaType.Value == producesType) ?? false)
+            );
+            
             return any;
         }
 
