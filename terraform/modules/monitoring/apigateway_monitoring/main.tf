@@ -1,7 +1,7 @@
 # cf. https://www.terraform.io/docs/providers/aws/r/cloudwatch_metric_alarm.html
 resource "aws_cloudwatch_metric_alarm" "APIGateway_5xxError" {
   count               = length(var.api_names)
-  alarm_name          = "APIGateway 5xxError ${element(var.api_names, count.index)}"
+  alarm_name          = "${element(var.api_names, count.index)}: APIGateway 5xxError"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1"
   metric_name         = "5XXError"
@@ -22,7 +22,7 @@ resource "aws_cloudwatch_metric_alarm" "APIGateway_5xxError" {
 # cf. https://www.terraform.io/docs/providers/aws/r/cloudwatch_metric_alarm.html
 resource "aws_cloudwatch_metric_alarm" "APIGateway_Latency" {
   count               = length(var.api_names)
-  alarm_name          = "APIGateway Latency ${element(var.api_names, count.index)}"
+  alarm_name          = "${element(var.api_names, count.index)}: APIGateway Latency"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "2"
   metric_name         = "Latency"
