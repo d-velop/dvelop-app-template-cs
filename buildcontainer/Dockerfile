@@ -15,8 +15,8 @@ RUN curl -fsSL https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${
     unzip packer.zip -d /usr/local/bin && chmod +x /usr/local/bin/packer ; rm packer.zip
 
 # terraform
-ENV TERRAFORM_VERSION 0.11.13
-ENV TERRAFORM_CHECKSUM 5925cd4d81e7d8f42a0054df2aafd66e2ab7408dbed2bd748f0022cfe592f8d2
+ENV TERRAFORM_VERSION 0.12.26
+ENV TERRAFORM_CHECKSUM 607bc802b1c6c2a5e62cc48640f38aaa64bef1501b46f0ae4829feb51594b257
 RUN curl -fsSL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -o terraform.zip  && \
     echo "${TERRAFORM_CHECKSUM} terraform.zip" | sha256sum -c - && \
     unzip terraform.zip -d /usr/local/bin && chmod +x /usr/local/bin/terraform ; rm terraform.zip
@@ -30,8 +30,8 @@ RUN curl -fsSL https://releases.hashicorp.com/terraform-provider-terraform/${TER
 
 
 # terraform mongodbatlas provider plugin (for mongodbatlas)
-ENV TERRAFORM_MONGODBATLAS_PLUGIN_VERSION 0.4.1
-ENV TERRAFORM_MONGODBATLAS_PLUGIN_CHECKSUM 78d6744c9a9f33f1aa710deec416ca9a35d3ab0da4148fa927cc9c6f81199510
+ENV TERRAFORM_MONGODBATLAS_PLUGIN_VERSION 0.5.1
+ENV TERRAFORM_MONGODBATLAS_PLUGIN_CHECKSUM 70166a9f2022f1ff96a1841648a8282a4cfcc38a6dc592df7b9a78a600d3d87c
 RUN curl -fsSL https://releases.hashicorp.com/terraform-provider-mongodbatlas/${TERRAFORM_MONGODBATLAS_PLUGIN_VERSION}/terraform-provider-mongodbatlas_${TERRAFORM_MONGODBATLAS_PLUGIN_VERSION}_linux_amd64.zip -o terraform_mongodbatlas_plugin.zip  && \
     echo "${TERRAFORM_MONGODBATLAS_PLUGIN_CHECKSUM} terraform_mongodbatlas_plugin.zip" | sha256sum -c - && \
     unzip terraform_mongodbatlas_plugin.zip -d /usr/local/lib/custom-terraform-plugins ; rm terraform_mongodbatlas_plugin.zip
@@ -44,8 +44,8 @@ RUN curl -fsSL https://releases.hashicorp.com/terraform-provider-template/${TERR
     unzip terraform_template_plugin.zip -d /usr/local/lib/custom-terraform-plugins ; rm terraform_template_plugin.zip
 
 # terraform aws provider plugin
-ENV TERRAFORM_AWS_PLUGIN_VERSION 2.57.0 
-ENV TERRAFORM_AWS_PLUGIN_CHECKSUM c58da1769a6b4e01764ad1e3a9357a3f42b56a2fa95c66899270e31836da7529
+ENV TERRAFORM_AWS_PLUGIN_VERSION 2.64.0 
+ENV TERRAFORM_AWS_PLUGIN_CHECKSUM faf2b833298d5a958a94963f1b0a5d3501b80725148a7fb81e5535f2ecba9edf
 RUN curl -fsSL https://releases.hashicorp.com/terraform-provider-aws/${TERRAFORM_AWS_PLUGIN_VERSION}/terraform-provider-aws_${TERRAFORM_AWS_PLUGIN_VERSION}_linux_amd64.zip -o terraform_aws_plugin.zip  && \
     echo "${TERRAFORM_AWS_PLUGIN_CHECKSUM} terraform_aws_plugin.zip" | sha256sum -c - && \
     unzip terraform_aws_plugin.zip -d /usr/local/lib/custom-terraform-plugins ; rm terraform_aws_plugin.zip

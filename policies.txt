@@ -1,0 +1,247 @@
+#####################################################################################################
+User: <appname>-buildsystem
+    - Policies:
+        - TerraformBucketFullAccess
+        - CloudwatchFullAccess
+        - ConfigureBudget
+        - ConfigureMonitoring
+        - <AppName>ServiceLambdaBuildplan
+        - CreateUseDelegateKMS
+        - <AppName>DenyPolicy
+
+#####################################################################################################
+
+TerraformBucketFullAccess 
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "FullAccessToTerraformStateBucket",
+            "Effect": "Allow",
+            "Action": "s3:*",
+            "Resource": "arn:aws:s3:::*terraform*"
+        }
+    ]
+}
+
+CloudwatchFullAccess 
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Logging",
+            "Effect": "Allow",
+            "Action": [
+                "logs:*",
+                "cloudwatch:*"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+
+ConfigureBudget
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Budget",
+            "Effect": "Allow",
+            "Action": [
+                "budgets:ViewBudget",
+                "budgets:ModifyBudget"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+
+ConfigureMonitoring
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "SNSAllow",
+            "Effect": "Allow",
+            "Action": [
+                "SNS:CreateTopic",
+                "SNS:SetTopicAttributes",
+                "SNS:GetTopicAttributes",
+                "SNS:ListTagsForResource"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+
+<AppName>ServiceLambdaBuildplan
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Cloudfront",
+            "Effect": "Allow",
+            "Action": [
+                "cloudfront:TagResource",
+                "cloudfront:UpdateDistribution",
+                "cloudfront:DeleteDistribution",
+                "cloudfront:UntagResource",
+                "cloudfront:CreateDistribution",
+                "cloudfront:GetDistribution",
+                "cloudfront:ListTagsForResource"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "PassAndAttachLambdaRole",
+            "Effect": "Allow",
+            "Action": [
+                "iam:PassRole",
+                "iam:ListAttachedRolePolicies",
+                "iam:ListInstanceProfilesForRole",
+                "iam:GetRole",
+                "iam:UpdateAssumeRolePolicy",
+                "iam:CreateRole",
+                "iam:DeleteRole",
+                "iam:CreateServiceLinkedRole"
+            ],
+            "Resource": [
+                "arn:aws:iam::*:role/<appname>service/<appname>service-lambda-role",
+                "arn:aws:iam::*:role/aws-service-role/ops.apigateway.amazonaws.com/AWSServiceRoleForAPIGateway"
+            ]
+        },
+        {
+            "Sid": "AllowToAttachPolicysToRole",
+            "Effect": "Allow",
+            "Action": [
+                "iam:AttachRolePolicy",
+                "iam:DetachRolePolicy"
+            ],
+            "Resource": [
+                "arn:aws:iam::*:role/<appname>service/<appname>service-lambda-role",
+                "arn:aws:iam::*:role/aws-service-role/ops.apigateway.amazonaws.com/AWSServiceRoleForAPIGateway"
+            ],
+            "Condition": {
+                "ArnEquals": {
+                    "iam:PolicyArn": [
+                        "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "AllowToCreateAndConfigureHostedZoneWithCertificate",
+            "Effect": "Allow",
+            "Action": [
+                "route53:CreateHostedZone",
+                "route53:ChangeResourceRecordSets",
+                "route53:Get*",
+                "route53:List*",
+                "acm:RequestCertificate",
+                "acm:DescribeCertificate",
+                "acm:ListTagsForCertificate"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "FullAccessToApiGateway",
+            "Effect": "Allow",
+            "Action": "apigateway:*",
+            "Resource": "arn:aws:apigateway:*::/*"
+        },
+        {
+            "Sid": "FullAccessToLambdaFunctions",
+            "Effect": "Allow",
+            "Action": "lambda:*",
+            "Resource": [
+                "arn:aws:lambda:eu-central-1:*:function:<appname>service"
+            ]
+        },
+        {
+            "Sid": "FullAccessToAssetsBucket",
+            "Effect": "Allow",
+            "Action": "s3:*",
+            "Resource": "arn:aws:s3:::assets.*<appname>.service.d-velop.cloud*"
+        }
+    ]
+}
+
+<AppName>DenyPolicy
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "DenyDataDeletion",
+            "Effect": "Deny",
+            "Action": [
+                "kms:ScheduleKeyDeletion",
+                "kms:DisableKey"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Effect": "Deny",
+            "Action": "kms:CreateKey",
+            "Resource": "*",
+            "Condition": {
+                "Bool": {
+                    "kms:BypassPolicyLockoutSafetyCheck": true
+                }
+            }
+        }
+    ]
+}
+
+
+CreateUseDelegateKMS
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "CreateKmsKeys",
+            "Effect": "Allow",
+            "Action": [
+                "kms:CreateKey",
+                "kms:CreateAlias",
+                "kms:UpdateKeyDescription",
+                "kms:DescribeKey",
+                "kms:GetKeyPolicy",
+                "kms:GetKeyRotationStatus",
+                "kms:ListResourceTags",
+                "kms:ListAliases"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "AllowKMSKeyUsage",
+            "Effect": "Allow",
+            "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+                "kms:DescribeKey"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "AllowKMSKeyDelegationToAWSServices",
+            "Effect": "Allow",
+            "Action": [
+                "kms:CreateGrant",
+                "kms:ListGrants",
+                "kms:RevokeGrant"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "Bool": {
+                    "kms:GrantIsForAWSResource": true
+                }
+            }
+        }
+    ]
+}

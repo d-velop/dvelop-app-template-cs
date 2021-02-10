@@ -79,5 +79,22 @@ namespace Remote.UnitTests.Constraints
             var isValid = constraintAttribute.IsValidForRequest(new RouteContext(new DefaultHttpContext()),actionDescriptor );
             Assert.IsFalse(isValid);
         }
+        
+        [TestMethod]
+        public void Test_IsValid_MultiHeader()
+        {
+            var constraintAttribute = new ProducesConstraintAttribute("application/json");
+            var actionDescriptor = new ActionDescriptor
+            {
+                ActionConstraints = new List<IActionConstraintMetadata>
+                {
+                    constraintAttribute
+                }
+            };
+            var defaultHttpContext = new DefaultHttpContext();
+            defaultHttpContext.Request.Headers["Accept"] = "text/html, application/json";
+            var isValid = constraintAttribute.IsValidForRequest(new RouteContext(defaultHttpContext),actionDescriptor );
+            Assert.IsTrue(isValid);
+        }
     }
 }

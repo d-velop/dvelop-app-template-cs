@@ -23,3 +23,18 @@ variable "appname" {
 variable "domainsuffix" {
   description = "dns suffix for the service endpoint"
 }
+
+variable "budget_amount" {
+  description = "The amount of cost or usage being measured for a budget (in USD)."
+  default     = "20.0"
+}
+
+variable "system_prefix" {
+  description = "Prefix for urls and buckets to identify dev-account (e.g. 'dev-')"
+  default     = ""
+}
+
+variable "tag_prod" {
+  description = "Set this variable to 1 to set the prod alias to the latest lambda function version"
+  default     = "0"
+}
