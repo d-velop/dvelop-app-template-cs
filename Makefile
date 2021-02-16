@@ -47,8 +47,10 @@ tf-bucket:
 	if  [ "$$?" -ne "0" ]; \
 	then \
 		echo Create terraform state bucket \"$(BUCKET_NAME)\"...; \
+		echo '{"version":4}' > /tmp/newstate &&\
 		aws s3api create-bucket --bucket $(BUCKET_NAME) --acl private --region eu-central-1 --create-bucket-configuration LocationConstraint=eu-central-1 &&\
 		aws s3api put-bucket-versioning --bucket $(BUCKET_NAME) --versioning-configuration Status=Enabled &&\
+		aws s3api put-object --bucket $(BUCKET_NAME) --key state --body /tmp/newstate &&\
 		aws s3api put-public-access-block --bucket $(BUCKET_NAME) --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true; \
 	fi
 
