@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -15,7 +14,6 @@ using Dvelop.Sdk.IdentityProvider.Middleware;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Http.Features;
@@ -37,17 +35,9 @@ namespace Dvelop.Remote
     public class Startup
     {
         private IConfiguration Configuration { get; }
-        
-        private readonly ICustomServiceProviderFactory _factory;
 
-        private readonly ILogger<Startup> _logger;
-
-        public Startup(IConfiguration configuration, ICustomServiceProviderFactory factory, ILoggerFactory loggerFactory)
+        public Startup(IConfiguration configuration)
         {
-            _factory = factory;
-            
-            _logger = loggerFactory.CreateLogger<Startup>();
-            
             Configuration = configuration;
 
             Configuration["DEFAULT_SYSTEM_BASE_URI"] = Configuration["SYSTEMBASEURI"]??"http://localhost";
@@ -56,13 +46,6 @@ namespace Dvelop.Remote
             Configuration["APP_NAME"] = Configuration["APP_NAME"]??"acme-apptemplatecs";
             Configuration["BASE"] = $"/{Configuration["APP_NAME"]}";
             Configuration["ASSETS"] = Configuration["ASSET_BASE_PATH"]??$"{Configuration["DEFAULT_SYSTEM_BASE_URI"]}{Configuration["BASE"]}";
-            
-            _logger.LogInformation($"SYSTEMBASEURI: {Configuration["SYSTEMBASEURI"]}");
-            _logger.LogInformation($"DEFAULT_SYSTEM_BASE_URI: {Configuration["DEFAULT_SYSTEM_BASE_URI"]}");
-            _logger.LogInformation($"SIGNATURE_SECRET set: {!string.IsNullOrWhiteSpace(Configuration["SIGNATURE_SECRET"])}");
-            _logger.LogInformation($"APP_NAME: {Configuration["APP_NAME"]}");
-            _logger.LogInformation($"ASSETS: {Configuration["ASSETS"]}");
-            _logger.LogInformation($"BASE: {Configuration["BASE"]}");
         }
 
         
@@ -123,17 +106,23 @@ namespace Dvelop.Remote
             services.AddDirectoryBrowser();
             services.AddLogging(loggingBuilder => loggingBuilder.SetMinimumLevel(LogLevel.Information));
             services.AddRouting(routeOptions => routeOptions.AppendTrailingSlash = true );
-            _factory.CreateServiceProvider(services);
         }
 
         // This method gets called by the ASP .NET core runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IActionDescriptorCollectionProvider  actionDescriptorProvider)
+        public void Configure(IApplicationBuilder app, IHostEnvironment env, IActionDescriptorCollectionProvider actionDescriptorProvider, ILogger<Startup> logger)
         {
+            logger.LogInformation($"SYSTEMBASEURI: {Configuration["SYSTEMBASEURI"]}");
+            logger.LogInformation($"DEFAULT_SYSTEM_BASE_URI: {Configuration["DEFAULT_SYSTEM_BASE_URI"]}");
+            logger.LogInformation($"SIGNATURE_SECRET set: {!string.IsNullOrWhiteSpace(Configuration["SIGNATURE_SECRET"])}");
+            logger.LogInformation($"APP_NAME: {Configuration["APP_NAME"]}");
+            logger.LogInformation($"ASSETS: {Configuration["ASSETS"]}");
+            logger.LogInformation($"BASE: {Configuration["BASE"]}");
+            
             // Print information about bound routes and the Controller, they are bound to.
             var routes = actionDescriptorProvider.ActionDescriptors.Items.Where(ad => ad.AttributeRouteInfo != null).ToList();
             routes.ForEach(ad =>
             {
-                _logger.LogInformation($"{ad.AttributeRouteInfo.Template} -> '/{ad.AttributeRouteInfo.Name}'");
+                logger.LogInformation($"{ad.AttributeRouteInfo.Template} -> '/{ad.AttributeRouteInfo.Name}'");
             });
 
             // Important:
@@ -155,7 +144,7 @@ namespace Dvelop.Remote
                         requestFeature.RawTarget ??= rc.HttpContext.Request.GetEncodedPathAndQuery();
                         
                         rc.HttpContext.Request.PathBase = "";
-                        _logger.LogInformation($"Changed PathBase from '{oldPathBase}' to '{rc.HttpContext.Request.PathBase}'");
+                        logger.LogInformation($"Changed PathBase from '{oldPathBase}' to '{rc.HttpContext.Request.PathBase}'");
                         rc.Result = RuleResult.ContinueRules;
                     })
 
@@ -189,7 +178,7 @@ namespace Dvelop.Remote
                 TenantInformationCallback = () =>
                 {
                     var tenantRepository = app.ApplicationServices.GetService<ITenantRepository>();
-                    _logger.LogError($"Tenant Identified {tenantRepository.TenantId} {tenantRepository.SystemBaseUri}");
+                    logger.LogError($"Tenant Identified {tenantRepository.TenantId} {tenantRepository.SystemBaseUri}");
                     return new TenantInformation
                     {
                         TenantId = tenantRepository.TenantId,
@@ -219,8 +208,8 @@ namespace Dvelop.Remote
                 // accept is added because most resources deliver JSON and HTML from the same URI
                 // x-dv-sig-1 ist added because most of the responses are tenant specific
                 httpContext.Response.Headers.Append("vary", new[] { "accept", "accept-language", "x-dv-sig-1"});
-                _logger.LogDebug($"{httpContext.Request.Method} ->  {httpContext.Request.Path}" );
-                await next.Invoke();
+                logger.LogDebug($"{httpContext.Request.Method} ->  {httpContext.Request.Path}" );
+                await next.Invoke().ConfigureAwait(false);
             });
             
             app.UseCookiePolicy();
@@ -281,11 +270,6 @@ namespace Dvelop.Remote
                 }
             }
         }
-    }
-
-    public interface ICustomServiceProviderFactory
-    {
-        IServiceProvider CreateServiceProvider(IServiceCollection services);
     }
 }
 

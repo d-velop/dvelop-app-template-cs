@@ -4,8 +4,8 @@ using Dvelop.Lambda.EntryPoint.DependencyInjection;
 using Dvelop.Remote;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 [assembly:LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
@@ -37,32 +37,33 @@ namespace Dvelop.Lambda.EntryPoint
         /// needs to be configured in this method using the UseStartup<Startup>() method.
         /// </summary>
         /// <param name="webHostBuilder"></param>
-        protected override void Init(IWebHostBuilder webHostBuilder)
+        protected override void Init(IHostBuilder hostBuilder)
         {
-            webHostBuilder
-                .ConfigureAppConfiguration((context, configurationBuilder) =>
-                    {
-                        configurationBuilder.Sources.Clear();
-                        configurationBuilder.AddEnvironmentVariables();
-                    }
-                )
-                .ConfigureServices(
-                    sc =>
-                    {
-                        Console.WriteLine("HUHU: called .ConfigureServices in init");
-                        sc.TryAddSingleton<ICustomServiceProviderFactory>(new CustomServiceProviderFactory());
-                    })
-                .ConfigureLogging((hostingContext, logging) =>
-                    {
-                     
-                        logging.AddLambdaLogger(new LambdaLoggerOptions
+            hostBuilder.ConfigureWebHostDefaults(webHostBuilder =>
+            {
+                webHostBuilder
+                    .ConfigureAppConfiguration((context, configurationBuilder) =>
                         {
-                            IncludeLogLevel = true,
-                            Filter = (category, logLevel) => true
+                            configurationBuilder.Sources.Clear();
+                            configurationBuilder.AddEnvironmentVariables();
+                        }
+                    )
+                    .ConfigureLogging((hostingContext, loggingBuilder) =>
+                    {
+                        loggingBuilder.ClearProviders();
+                        loggingBuilder.AddLambdaLogger(new LambdaLoggerOptions
+                        {
+                            IncludeException = true
                         });
-                     
+                        loggingBuilder.SetMinimumLevel(LogLevel.Debug);
+                        loggingBuilder.AddFilter("Default", LogLevel.Debug);
+                        loggingBuilder.AddFilter("System", LogLevel.Information);
+                        loggingBuilder.AddFilter("Microsoft", LogLevel.Information);
+
                     })
                     .UseStartup<Startup>();
+            }).UseServiceProviderFactory(new EnvironmentAwareServiceProviderFactory(new AwsServiceProviderFactory()));;
         }
     }
+
 }
