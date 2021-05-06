@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using Dvelop.Sdk.TenantMiddleware;
 using Dvelop.Domain.Repositories;
@@ -39,6 +40,7 @@ namespace Dvelop.Remote
         private IConfiguration Configuration { get; }
 
         private readonly ICustomServiceProviderFactory _factory;
+        private readonly ILoggerFactory _loggerFactory;
 
         private readonly ILogger<Startup> _logger;
 
@@ -46,6 +48,7 @@ namespace Dvelop.Remote
             ILoggerFactory loggerFactory)
         {
             _factory = factory;
+            _loggerFactory = loggerFactory;
 
             _logger = loggerFactory.CreateLogger<Startup>();
 
@@ -58,7 +61,7 @@ namespace Dvelop.Remote
             Configuration["BASE"] = $"/{Configuration["APP_NAME"]}";
             Configuration["ASSETS"] = Configuration["ASSET_BASE_PATH"] ??
                                       $"{Configuration["DEFAULT_SYSTEM_BASE_URI"]}{Configuration["BASE"]}";
-
+            
             _logger.LogInformation($"SYSTEMBASEURI: {Configuration["SYSTEMBASEURI"]}");
             _logger.LogInformation($"DEFAULT_SYSTEM_BASE_URI: {Configuration["DEFAULT_SYSTEM_BASE_URI"]}");
             _logger.LogInformation(
@@ -81,7 +84,7 @@ namespace Dvelop.Remote
             services.AddHttpClient();
             
             // Add a known HttpClient for IdentityProvider 
-            services.AddHttpClient(IdentityProviderClient.APPNAME);
+            services.AddHttpClient("idp");
 
             // Allow Classes to access the HttpContext
             services.AddHttpContextAccessor();
@@ -127,8 +130,16 @@ namespace Dvelop.Remote
             })*/
 
             services.AddDirectoryBrowser();
-            services.AddLogging(loggingBuilder => loggingBuilder.SetMinimumLevel(LogLevel.Information));
-            services.AddRouting(routeOptions => routeOptions.AppendTrailingSlash = true);
+
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder
+                    .SetMinimumLevel(LogLevel.Debug)
+                    .AddFilter("Microsoft", LogLevel.Warning)
+                    .AddFilter("Microsoft.AspNetCore", LogLevel.Warning);
+            });
+                
+            services.AddRouting(routeOptions => routeOptions.AppendTrailingSlash = true );
             return _factory.CreateServiceProvider(services);
         }
 
@@ -169,38 +180,80 @@ namespace Dvelop.Remote
                     })
 
                 // This redirect ensures, that a URL is always used with an trailing '/', expect in the last segment ist a '.'.
-                // .AddRedirect(@"^(((.*/)|(/?))[^/.]+(?!/$))$", "$1/",302)
+                .AddRedirect(@"^(((.*/)|(/?))[^/.]+(?!/$))$", "$1/",302)
             );
 
             // This will a a virtual path-segment to the application
             app.UsePathBase(Configuration["BASE"]);
-
+            
+            var tenantLogger = _loggerFactory.CreateLogger(typeof(IdentityProviderMiddleware));
             // Enable Multi-Tenancy
             app.UseTenantMiddleware(new TenantMiddlewareOptions
             {
                 DefaultSystemBaseUri = Configuration["DEFAULT_SYSTEM_BASE_URI"],
                 DefaultTenantId = "0",
                 SignatureSecretKey = Convert.FromBase64String(Configuration["SIGNATURE_SECRET"]),
-
+                LogCallback = (level, s) =>
+                {
+                    switch (level)
+                    {
+                        case TenantMiddlewareLogLevel.Debug:
+                            tenantLogger.LogInformation($"{s}");
+                            break;
+                        case TenantMiddlewareLogLevel.Info:
+                            tenantLogger.LogInformation($"{s}");
+                            break;
+                        case TenantMiddlewareLogLevel.Error:
+                            tenantLogger.LogError($"{s}");
+                            break;
+                        default:
+                            tenantLogger.LogInformation($"{s}");
+                            break;
+                    }
+                },
                 OnTenantIdentified = (tenantId, systemBaseUri) =>
                 {
                     // Use Built-In Dependency Injection to Store Tenant Information (Bound to Request-Context)
                     var tenantRepository = app.ApplicationServices.GetService<ITenantRepository>();
+                    tenantLogger.LogDebug($"Tenant Identified {tenantRepository.TenantId} {tenantRepository.SystemBaseUri}");
                     tenantRepository.SystemBaseUri = new Uri(systemBaseUri);
                     tenantRepository.TenantId = tenantId;
                 }
             });
             
             // Enable d.ecs IdentityProvider
-            var httpClientFactory = app.ApplicationServices.GetService<IHttpClientFactory>();
+            var idpHttpClient = new HttpClient();
+            idpHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd(Configuration["APP_NAME"]);
+            var idpLogger = _loggerFactory.CreateLogger(typeof(IdentityProviderMiddleware));
             app.UseIdentityProvider(new IdentityProviderOptions
             {
                 BaseAddress = new Uri(Configuration["DEFAULT_SYSTEM_BASE_URI"]),
-                HttpClient = httpClientFactory.CreateClient(IdentityProviderClient.APPNAME),
+                HttpClient = idpHttpClient,
+                LogCallBack = (level, s) =>
+                {
+                    switch (level)
+                    {
+                        case IdentityProviderClientLogLevel.Error:
+                            idpLogger.LogError($"{s}");
+                            break;
+                        case IdentityProviderClientLogLevel.Debug:
+                            idpLogger.LogInformation($"{s}");
+                            break;
+                        case IdentityProviderClientLogLevel.Info:
+                            idpLogger.LogInformation($"{s}");
+                            break;
+                        case IdentityProviderClientLogLevel.Warning:
+                            idpLogger.LogWarning($"{s}");
+                            break;
+                        default:
+                            idpLogger.LogInformation($"{s}");
+                            break;
+                    }
+                },
                 TenantInformationCallback = () =>
                 {
                     var tenantRepository = app.ApplicationServices.GetService<ITenantRepository>();
-                    _logger.LogError($"Tenant Identified {tenantRepository.TenantId} {tenantRepository.SystemBaseUri}");
+                    idpLogger.LogInformation($"Tenant Identified {tenantRepository.TenantId} {tenantRepository.SystemBaseUri}");
                     return new TenantInformation
                     {
                         TenantId = tenantRepository.TenantId,

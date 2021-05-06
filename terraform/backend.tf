@@ -25,7 +25,7 @@ data "terraform_remote_state" "app" {
   defaults = {
     source_code_hash            = "0"
     build_version               = "0"
-    prod_service_lambda_version = "1"
+    prod_service_lambda_version = "$LATEST"
   }
 }
 
