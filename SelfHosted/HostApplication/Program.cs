@@ -1,9 +1,9 @@
 using Dvelop.Remote;
 using Dvelop.Selfhosted.HostApplication.DependencyInjection;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Dvelop.Selfhosted.HostApplication
 {
@@ -14,23 +14,28 @@ namespace Dvelop.Selfhosted.HostApplication
             BuildWebHost().Run();
         }
 
-        public static IWebHost BuildWebHost()
+        public static IHost BuildWebHost()
         {
-            var webHostBuilder = WebHost.CreateDefaultBuilder()
-                .ConfigureServices(sc => sc
-                    .AddSingleton<ICustomServiceProviderFactory>(new SelfHostedServiceProviderFactory())
-                ).ConfigureAppConfiguration((context, builder) =>
-                {
-                    builder.Sources.Clear();
-                    builder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-                    builder.AddEnvironmentVariables();
-                } )
-                .UseStartup<Startup>()
-                .UseUrls("http://*:5000");
+            var hostBuilder = Host.CreateDefaultBuilder().ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.ConfigureAppConfiguration((context, configBuilder) =>
+                    {
+                        configBuilder.AddJsonFile("appsettings.json", true, true);
+                        configBuilder.AddJsonFile("appsettings.custom.json", true, true);
+                        configBuilder.AddEnvironmentVariables();
+                    })
+                    .ConfigureLogging(loggingBuilder =>
+                    {
+                        loggingBuilder.ClearProviders();
+                        loggingBuilder.AddConsole();
+                    })
+                    .UseStartup<Startup>();
+            }).UseServiceProviderFactory(new EnvironmentAwareServiceProviderFactory(new SelfHostedServiceProviderFactory()));
 
-            var webHost = webHostBuilder.Build();
-            
+            var webHost = hostBuilder.Build();
+
             return webHost;
+
         }
     }
 }

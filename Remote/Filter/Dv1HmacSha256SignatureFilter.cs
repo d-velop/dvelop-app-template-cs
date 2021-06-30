@@ -38,7 +38,7 @@ namespace Dvelop.Remote.Filter
                 return;
             }
             
-            var signatureHash = await httpContextRequest.CalculateDv1HmacSha256Signature( _secret );
+            var signatureHash = await httpContextRequest.CalculateDv1HmacSha256Signature( _secret ).ConfigureAwait(false);
             if (signatureHash == null)
             {
                 _log.LogInformation("Cloud Event Signature calculation failed.");
