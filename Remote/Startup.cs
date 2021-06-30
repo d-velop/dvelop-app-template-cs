@@ -178,7 +178,7 @@ namespace Dvelop.Remote
                 TenantInformationCallback = () =>
                 {
                     var tenantRepository = app.ApplicationServices.GetService<ITenantRepository>();
-                    logger.LogError($"Tenant Identified {tenantRepository.TenantId} {tenantRepository.SystemBaseUri}");
+                    logger.LogInformation($"Tenant Identified {tenantRepository.TenantId} {tenantRepository.SystemBaseUri}");
                     return new TenantInformation
                     {
                         TenantId = tenantRepository.TenantId,
