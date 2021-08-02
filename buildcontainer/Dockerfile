@@ -3,9 +3,11 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1-bionic
 WORKDIR /buildinternal
 # unzip, zip, python, build-essential (make, gcc and more) ...
 RUN apt-get update && \
-    apt-get -y --fix-missing install ca-certificates apt-utils curl rsync unzip zip python python-pip openssh-client git-core build-essential jq && \
-    apt-get clean     
+    apt-get -y --fix-missing install ca-certificates apt-utils curl rsync unzip zip python3 python-pip groff openssh-client git-core build-essential jq && \
+    apt-get clean
 RUN rm -rf /var/lib/apt/lists/*
+
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
 
 # packer
 ENV PACKER_VERSION 1.2.5
@@ -58,10 +60,10 @@ RUN curl -fsSL https://releases.hashicorp.com/terraform-provider-archive/${TERRA
     unzip terraform_terraform_plugin.zip -d /usr/local/lib/custom-terraform-plugins ; rm terraform_terraform_plugin.zip
 
 # aws cli
-RUN curl -sSL https://s3.amazonaws.com/aws-cli/awscli-bundle.zip -o awscli-bundle.zip && \
-    unzip awscli-bundle.zip && \
-    ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws && \
-    rm awscli-bundle.zip && rm -rf ./awscli-bundle
+RUN curl https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o awscliv2.zip && \
+    unzip awscliv2.zip && \
+    aws/install -i /usr/local/aws -b /usr/local/bin && \
+    rm awscliv2.zip && rm -rf ./aws
 
 COPY umask.sh /
 RUN chmod +x /umask.sh
