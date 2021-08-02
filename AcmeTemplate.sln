@@ -32,7 +32,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "terraform", "terraform", "{
 		terraform\backend.tf = terraform\backend.tf
 		terraform\main.tf = terraform\main.tf
 		terraform\outputs.tf = terraform\outputs.tf
-		terraform\provider.tf = terraform\provider.tf
 		terraform\variables.tf = terraform\variables.tf
 	EndProjectSection
 EndProject

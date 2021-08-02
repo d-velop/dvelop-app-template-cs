@@ -3,9 +3,11 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1-bionic
 WORKDIR /buildinternal
 # unzip, zip, python, build-essential (make, gcc and more) ...
 RUN apt-get update && \
-    apt-get -y --fix-missing install ca-certificates apt-utils curl rsync unzip zip python python-pip openssh-client git-core build-essential jq && \
+    apt-get -y --fix-missing install ca-certificates apt-utils curl rsync unzip zip python3 python-pip groff openssh-client git-core build-essential jq && \
     apt-get clean     
 RUN rm -rf /var/lib/apt/lists/*
+
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
 
 # packer
 ENV PACKER_VERSION 1.2.5
@@ -15,11 +17,12 @@ RUN curl -fsSL https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${
     unzip packer.zip -d /usr/local/bin && chmod +x /usr/local/bin/packer ; rm packer.zip
 
 # terraform
-ENV TERRAFORM_VERSION 0.12.26
-ENV TERRAFORM_CHECKSUM 607bc802b1c6c2a5e62cc48640f38aaa64bef1501b46f0ae4829feb51594b257
+ENV TERRAFORM_VERSION 0.13.7
+ENV TERRAFORM_CHECKSUM 4a52886e019b4fdad2439da5ff43388bbcc6cce9784fde32c53dcd0e28ca9957
 RUN curl -fsSL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -o terraform.zip  && \
     echo "${TERRAFORM_CHECKSUM} terraform.zip" | sha256sum -c - && \
     unzip terraform.zip -d /usr/local/bin && chmod +x /usr/local/bin/terraform ; rm terraform.zip
+    
 
 # terraform terraform provider plugin (for remote state)
 ENV TERRAFORM_TERRAFORM_PLUGIN_VERSION 1.0.2
@@ -37,31 +40,30 @@ RUN curl -fsSL https://releases.hashicorp.com/terraform-provider-mongodbatlas/${
     unzip terraform_mongodbatlas_plugin.zip -d /usr/local/lib/custom-terraform-plugins ; rm terraform_mongodbatlas_plugin.zip
 
 # terraform template provider plugin
-ENV TERRAFORM_TEMPLATE_PLUGIN_VERSION 2.1.2
-ENV TERRAFORM_TEMPLATE_PLUGIN_CHECKSUM 149e4bf47ac21b67f6567767afcd29caaf0b0ca43714748093a00a2a98cd17a8
+ENV TERRAFORM_TEMPLATE_PLUGIN_VERSION 2.2.0
+ENV TERRAFORM_TEMPLATE_PLUGIN_CHECKSUM 8a154388f3708e3df5a69122a23bdfaf760a523788a5081976b3d5616f7d30ae
 RUN curl -fsSL https://releases.hashicorp.com/terraform-provider-template/${TERRAFORM_TEMPLATE_PLUGIN_VERSION}/terraform-provider-template_${TERRAFORM_TEMPLATE_PLUGIN_VERSION}_linux_amd64.zip -o terraform_template_plugin.zip  && \
     echo "${TERRAFORM_TEMPLATE_PLUGIN_CHECKSUM} terraform_template_plugin.zip" | sha256sum -c - && \
     unzip terraform_template_plugin.zip -d /usr/local/lib/custom-terraform-plugins ; rm terraform_template_plugin.zip
 
 # terraform aws provider plugin
-ENV TERRAFORM_AWS_PLUGIN_VERSION 2.64.0 
-ENV TERRAFORM_AWS_PLUGIN_CHECKSUM faf2b833298d5a958a94963f1b0a5d3501b80725148a7fb81e5535f2ecba9edf
+ENV TERRAFORM_AWS_PLUGIN_VERSION 3.52.0 
+ENV TERRAFORM_AWS_PLUGIN_CHECKSUM 2e0432fabeb5e44d756a5566168768f1b6dea3cc0e5650fac966820e90d18367
 RUN curl -fsSL https://releases.hashicorp.com/terraform-provider-aws/${TERRAFORM_AWS_PLUGIN_VERSION}/terraform-provider-aws_${TERRAFORM_AWS_PLUGIN_VERSION}_linux_amd64.zip -o terraform_aws_plugin.zip  && \
     echo "${TERRAFORM_AWS_PLUGIN_CHECKSUM} terraform_aws_plugin.zip" | sha256sum -c - && \
     unzip terraform_aws_plugin.zip -d /usr/local/lib/custom-terraform-plugins ; rm terraform_aws_plugin.zip
 
 # terraform terraform provider archive (for lambda)
-ENV TERRAFORM_TERRAFORM_PLUGIN_VERSION 1.3.0
-ENV TERRAFORM_TERRAFORM_PLUGIN_CHECKSUM e0d1213625d40d124bd9570f0d92907416f8d61bc8c389c776e72c0a97020cce
+ENV TERRAFORM_TERRAFORM_PLUGIN_VERSION 2.2.0
+ENV TERRAFORM_TERRAFORM_PLUGIN_CHECKSUM e63f12ea938520b3f83634fc29da28d92eed5cfbc5cc8ca08281a6a9c36cca65
 RUN curl -fsSL https://releases.hashicorp.com/terraform-provider-archive/${TERRAFORM_TERRAFORM_PLUGIN_VERSION}/terraform-provider-archive_${TERRAFORM_TERRAFORM_PLUGIN_VERSION}_linux_amd64.zip -o terraform_terraform_plugin.zip  && \
     echo "${TERRAFORM_TERRAFORM_PLUGIN_CHECKSUM} terraform_terraform_plugin.zip" | sha256sum -c - && \
     unzip terraform_terraform_plugin.zip -d /usr/local/lib/custom-terraform-plugins ; rm terraform_terraform_plugin.zip
-
-# aws cli
-RUN curl -sSL https://s3.amazonaws.com/aws-cli/awscli-bundle.zip -o awscli-bundle.zip && \
-    unzip awscli-bundle.zip && \
-    ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws && \
-    rm awscli-bundle.zip && rm -rf ./awscli-bundle
+   
+RUN curl https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o awscliv2.zip && \
+    unzip awscliv2.zip && \
+    aws/install -i /usr/local/aws -b /usr/local/bin && \
+    rm awscliv2.zip && rm -rf ./aws
 
 COPY umask.sh /
 RUN chmod +x /umask.sh
