@@ -57,7 +57,7 @@ tf-bucket:
 tf-init: tf-bucket
 	echo "Initializing terraform"
 	cd /build/terraform && \
-	terraform init -input=false -plugin-dir=/usr/local/lib/custom-terraform-plugins -backend-config=backendconfig/$(SYSTEM_PREFIX)backend.tfbackend
+	terraform init -input=false -backend-config=backendconfig/$(SYSTEM_PREFIX)backend.tfbackend
 
 plan: tf-init build-lambda asset_hash
 	echo "Planning terraform changes"
