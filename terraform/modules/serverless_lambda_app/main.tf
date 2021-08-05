@@ -1,7 +1,6 @@
 #cf. https://www.terraform.io/docs/providers/aws/r/s3_bucket.html
 resource "aws_s3_bucket" "assets" {
   bucket = var.assets_bucket_name
-  region = var.aws_region
 
   # required if webfonts are delivered cf. https://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html and https://zinoui.com/blog/cross-domain-fonts
   cors_rule {
