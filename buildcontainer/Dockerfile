@@ -31,8 +31,8 @@ RUN curl -fsSL https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${
     unzip packer.zip -d /usr/local/bin && chmod +x /usr/local/bin/packer ; rm packer.zip
 
 # terraform
-ENV TERRAFORM_VERSION 0.14.11
-ENV TERRAFORM_CHECKSUM 171ef5a4691b6f86eab524feaf9a52d5221c875478bd63dd7e55fef3939f7fd4
+ENV TERRAFORM_VERSION 1.0.4
+ENV TERRAFORM_CHECKSUM 5c0be4d52de72143e2cd78e417ee2dd582ce229d73784fd19444445fa6e1335e
 RUN curl -fsSL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -o terraform.zip  && \
     echo "${TERRAFORM_CHECKSUM} terraform.zip" | sha256sum -c - && \
     unzip terraform.zip -d /usr/local/bin && chmod +x /usr/local/bin/terraform ; rm terraform.zip
