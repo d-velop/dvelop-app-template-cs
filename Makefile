@@ -57,6 +57,10 @@ tf-bucket:
 tf-init: tf-bucket
 	echo "Initializing terraform"
 	cd /build/terraform && \
+	if  [$(TERRAFORM_VERSION) == *"0.13"*]; \
+	then \
+		terraform 0.13upgrade; \
+	fi && \
 	terraform init -input=false -backend-config=backendconfig/$(SYSTEM_PREFIX)backend.tfbackend
 
 plan: tf-init build-lambda asset_hash
