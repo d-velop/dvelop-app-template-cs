@@ -91,6 +91,7 @@ namespace Dvelop.Remote
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.IgnoreNullValues = true;
+                    options.JsonSerializerOptions.WriteIndented = true;
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                 });
@@ -149,7 +150,7 @@ namespace Dvelop.Remote
                     })
 
                 // This redirect ensures, that a URL is always used with an trailing '/', expect in the last segment ist a '.'.
-                // .AddRedirect(@"^(((.*/)|(/?))[^/.]+(?!/$))$", "$1/",302)
+                .AddRedirect(@"^(((.*/)|(/?))[^/.]+(?!/$))$", "$1/",302)
             );
             
             // This will a a virtual path-segment to the application
