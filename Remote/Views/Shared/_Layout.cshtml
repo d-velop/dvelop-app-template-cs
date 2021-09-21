@@ -1,5 +1,7 @@
-﻿@using Microsoft.Extensions.Configuration
-@inject IConfiguration Configuration
+﻿@using Dvelop.Remote
+@inject IAssetLocator _assetLocator;
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,14 +11,14 @@
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
-    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
-    <link rel="stylesheet" href="@Configuration["ASSETS"]/@ViewData["Css"]" />
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@3.0.0/dist/material-components-web.min.css">
+    <script src="https://unpkg.com/material-components-web@3.0.0/dist/material-components-web.min.js"></script>
+    <link rel="stylesheet" href="@_assetLocator.GetAssetsPath()/@ViewData["Css"]" />
 </head>
 
 <body class="mdc-typography" data-mode="@ViewData["DataMode"]">
     @RenderBody()
-    <script async src="@Configuration["ASSETS"]/@ViewData["Js"]"></script>
-    <!--<script type="text/javascript" src="@Configuration["ASSETS"]/dvelop-dapi/scripts/dapi.js"></script>-->
+    <script async src="@_assetLocator.GetAssetsPath()/@ViewData["Js"]"></script>
+    <!--<script type="text/javascript" src="@_assetLocator.GetAssetsPath()/dvelop-dapi/scripts/dapi.js"></script>-->
 </body>
 </html>
