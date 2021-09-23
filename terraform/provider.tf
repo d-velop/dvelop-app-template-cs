@@ -5,7 +5,3 @@
 provider "archive" {
   # Configuration options
 }
-
-provider "template" {
-  # Configuration options
-}
