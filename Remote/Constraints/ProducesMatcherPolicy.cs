@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -97,7 +97,7 @@ namespace Dvelop.Remote.Constraints
                             var mediaType = new MediaType(contentType);
 
                             // Example: 'application/json' is subset of 'application/*'
-                            // 
+                            //
                             // This means that when the request has content-type 'application/json' an endpoint
                             // what accept 'application/*' should match.
                             if (edgeKey.IsSubsetOf(mediaType))
@@ -219,7 +219,7 @@ namespace Dvelop.Remote.Constraints
                     return _exitDestination;
                 }
 
-                var x = MediaTypeHeaderValue.ParseList(acceptContentType);
+                var x = MediaTypeHeaderValue.ParseList(acceptContentType)?.ToList();
 
                 var mediaTypeHeaderValues = x?.OrderBy(y => y.Quality);
 
@@ -227,7 +227,7 @@ namespace Dvelop.Remote.Constraints
 
                 // Loop through accept values. Highest quality come first
                 if (x == null) return _exitDestination;
-                foreach (var t in x)
+                foreach (var t in mediaTypeHeaderValues)
                 {
                     var requestMediaType = new MediaType(t.MediaType);
 
@@ -240,6 +240,23 @@ namespace Dvelop.Remote.Constraints
                         {
                             return destinations[j].destination;
                         }
+                    }
+                }
+
+                return GetDefaultHtmlDestination(x);
+            }
+
+            // Get text/html destination as default, when only */* exists in accept-header
+            private int GetDefaultHtmlDestination(List<MediaTypeHeaderValue> x)
+            {
+                var htmlMediaType = new MediaType(System.Net.Mime.MediaTypeNames.Text.Html);
+                if (!x.Exists(t => new MediaType(t.MediaType).MatchesAllTypes)) return _exitDestination;
+
+                for (var j = 0; j < _destinations.Length; j++)
+                {
+                    if (_destinations[j].mediaType.IsSubsetOf(htmlMediaType))
+                    {
+                        return _destinations[j].destination;
                     }
                 }
 
