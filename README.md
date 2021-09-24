@@ -20,6 +20,9 @@ To develop a d.velop cloud app you will need to install [.NET Core SDK 3.1](http
 
 If you use Microsoft Visual Studio you will need "ASP.NET and web development", ".NET desktop development" and ".NET Core cross-platform development" workloads installed.
 
+The template comes with a launch configuration for *Visual Studio Code*. To use the build or debug feature from *Visual Studio Code* you have to [install the .NET Core SDK](https://docs.microsoft.com/de-de/dotnet/core/install/) and the Visual Studio Code *C# extension*.
+
+
 ### Build
 
 Build the image for your app's build container ([Dockerfile](./buildcontainer/Dockerfile)).

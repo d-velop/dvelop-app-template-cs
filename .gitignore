@@ -260,7 +260,6 @@ paket-files/
 __pycache__/
 *.pyc
 outPrgFiles/
-.vscode/
 dist/
 out/
 terraform/.terraform/
