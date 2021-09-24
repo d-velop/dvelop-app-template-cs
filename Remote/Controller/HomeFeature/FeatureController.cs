@@ -2,6 +2,7 @@
 using Dvelop.Remote.Controller.VacationRequest;
 using Dvelop.Sdk.Home.Dto;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace Dvelop.Remote.Controller.HomeFeature
 {
@@ -11,8 +12,14 @@ namespace Dvelop.Remote.Controller.HomeFeature
     [Route("features")]
     public class HomeFeatureController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
         public const string FeaturesDescription = "featuresdescription";
-     
+
+        public HomeFeatureController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+        
         /// <summary>
         /// Creates a List of Features, to be shown at the /home-App
         /// </summary>
@@ -43,7 +50,7 @@ namespace Dvelop.Remote.Controller.HomeFeature
                 Summary = "Extend the d.velop cloud platform",
                 Url = Url.RouteUrl(nameof(VacationRequestController) + "." +nameof(VacationRequestController.GetVacationListView)),
                 Color = "pumpkin",
-                Icon = "dv-tags",
+                IconUri = $"{_configuration["BASE"]}/icon_white.png",
                 Description = "Learn to create a d.ecs architecture application for extending the d.velop cloud platform."
             };
             return feature;
