@@ -40,12 +40,12 @@ namespace Dvelop.Remote
         {
             Configuration = configuration;
 
-            Configuration["DEFAULT_SYSTEM_BASE_URI"] = Configuration["SYSTEMBASEURI"]??"http://localhost";
+            Configuration["DEFAULT_SYSTEM_BASE_URI"] = Configuration["SYSTEMBASEURI"]??"http://localhost:5000";
             Configuration["SIGNATURE_SECRET"] = Configuration["SIGNATURE_SECRET"]??"";
 
             Configuration["APP_NAME"] = Configuration["APP_NAME"]??"acme-apptemplatecs";
             Configuration["BASE"] = $"/{Configuration["APP_NAME"]}";
-            Configuration["ASSETS"] = Configuration["ASSET_BASE_PATH"]??$"{Configuration["DEFAULT_SYSTEM_BASE_URI"]}{Configuration["BASE"]}";
+            
         }
 
         
@@ -56,7 +56,7 @@ namespace Dvelop.Remote
             
             // Add Filter for DvSignature
             services.AddScoped<Dv1HmacSha256SignatureFilter>();
-            
+            services.AddSingleton<IAssetLocator, AssetLocator>();
             // Allow Classes to access the HttpContext
             services.AddHttpContextAccessor();
             services.TryAddEnumerable(ServiceDescriptor.Singleton<MatcherPolicy, ProducesMatcherPolicy>());
@@ -230,46 +230,55 @@ namespace Dvelop.Remote
                 }
             });
 
-
+            // Register all routes to Controller
             app.UseRouting();
+            
+            // If Assets should not be loaded from an CDN
+            if (string.IsNullOrWhiteSpace(Configuration["ASSET_BASE_PATH"]))
+            {
+                // If no relative Asset Dir configured, use default.
+                if (string.IsNullOrWhiteSpace(
+                    Configuration["RELATIVE_ASSET_DIR"])) 
+                {
+                    app.UseStaticFiles(new StaticFileOptions
+                    {
+                        RequestPath = ""
+                    });
+                }
+                else
+                {
+                    // For running from within an IDE, configure the Directory
+                    var currentDirectory = Directory.GetCurrentDirectory();
+                    var wwwroot = Path.Combine(currentDirectory, Configuration["RELATIVE_ASSET_DIR"]);
+
+                    app.UseStaticFiles(new StaticFileOptions
+                    {
+                        FileProvider = new PhysicalFileProvider(wwwroot),
+                        RequestPath = ""
+                    });
+
+                    if (env.IsDevelopment())
+                    {
+                        app.UseDirectoryBrowser(new DirectoryBrowserOptions
+                        {
+                            FileProvider = new PhysicalFileProvider(wwwroot),
+                            RequestPath = ""
+                        });
+                    }
+                }
+            }
+
+            
+            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute().RequireAuthorization();
+                endpoints.MapDefaultControllerRoute().RequireAuthorization(  );
                 endpoints.MapControllers(); // Map attribute-routed API controllers
                 endpoints.MapRazorPages();
             });
-
-            if (!string.IsNullOrWhiteSpace(Configuration["ASSET_BASE_PATH"]))
-            {
-                return;
-            }
-            if (string.IsNullOrWhiteSpace(Configuration["RELATIVE_ASSET_DIR"])) // If no relative Asset Dir configured, use default.
-            {
-                app.UseStaticFiles();
-            }
-            else
-            {
-                // For running from within an IDE, configure the Directory
-                var currentDirectory = Directory.GetCurrentDirectory();
-                var wwwroot = Path.Combine(currentDirectory, Configuration["RELATIVE_ASSET_DIR"]);
-
-                app.UseStaticFiles(new StaticFileOptions
-                {
-                    FileProvider = new PhysicalFileProvider(wwwroot), 
-                    RequestPath = ""
-                });
-                
-                if (env.IsDevelopment())
-                {
-                    app.UseDirectoryBrowser(new DirectoryBrowserOptions
-                    {
-                        FileProvider = new PhysicalFileProvider(wwwroot), 
-                        RequestPath = ""
-                    });
-                }
-            }
+           
         }
     }
 }
