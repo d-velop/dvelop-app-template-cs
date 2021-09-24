@@ -1,5 +1,5 @@
 APP_NAME=acme-apptemplatecs
-DOMAIN_SUFFIX=.hackathon.service.d-velop.cloud
+DOMAIN_SUFFIX=.deloreans.service.d-velop.cloud
 BUILD_VERSION=rev.$(shell git rev-parse --short HEAD).date.$(shell date '+%d-%m-%Y-%H.%M.%S')
 
 all: build
@@ -57,7 +57,7 @@ tf-bucket:
 tf-init: tf-bucket
 	echo "Initializing terraform"
 	cd /build/terraform && \
-	terraform init -input=false -plugin-dir=/usr/local/lib/custom-terraform-plugins -backend-config=backendconfig/$(SYSTEM_PREFIX)backend.tfbackend
+	terraform init -input=false -backend-config=backendconfig/$(SYSTEM_PREFIX)backend.tfbackend
 
 plan: tf-init build-lambda asset_hash
 	echo "Planning terraform changes"
@@ -105,7 +105,7 @@ rename:
 
 destroy: tf-init
 	echo "destroy is disabled. Uncomment in Makefile to enable destroy."
-	#cd /build/terraform && terraform destroy -var 'signature_secret=$(SIGNATURE_SECRET)' -var 'build_version=$(build_version)' -var 'appname=$(APP_NAME)' -var 'domainsuffix=$(DOMAIN_SUFFIX)' -var 'system_prefix=$(SYSTEM_PREFIX)' -var 'tag_prod=$(TAG_PROD)' -input=false -force
+	#cd /build/terraform && terraform destroy -var 'signature_secret=$(SIGNATURE_SECRET)' -var 'build_version=$(build_version)' -var 'appname=$(APP_NAME)' -var 'domainsuffix=$(DOMAIN_SUFFIX)' -var 'system_prefix=$(SYSTEM_PREFIX)' -var 'tag_prod=$(TAG_PROD)' -input=false -auto-approve
 
 dns: tf-init	
 	cd /build/terraform && terraform output -input=false -json | jq "{Domain: .domain.value, Nameserver: .nameserver.value}" > ../dist/dns-entry.json
