@@ -13,11 +13,13 @@ namespace Dvelop.Remote.Controller.HomeFeature
     public class HomeFeatureController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly IAssetLocator _assetLocator;
         public const string FeaturesDescription = "featuresdescription";
 
-        public HomeFeatureController(IConfiguration configuration)
+        public HomeFeatureController(IConfiguration configuration, IAssetLocator assetLocator)
         {
             _configuration = configuration;
+            _assetLocator = assetLocator;
         }
         
         /// <summary>
@@ -50,7 +52,7 @@ namespace Dvelop.Remote.Controller.HomeFeature
                 Summary = "Extend the d.velop cloud platform",
                 Url = Url.RouteUrl(nameof(VacationRequestController) + "." +nameof(VacationRequestController.GetVacationListView)),
                 Color = "pumpkin",
-                IconUri = $"{_configuration["BASE"]}/icon_white.png",
+                IconUri = $"{_assetLocator.GetAssetsPath()}/icon_white.png",
                 Description = "Learn to create a d.ecs architecture application for extending the d.velop cloud platform."
             };
             return feature;
