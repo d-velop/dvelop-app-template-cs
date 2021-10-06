@@ -5,7 +5,7 @@ using Dvelop.Sdk.Logging.Abstractions.Scope;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace Dvelop.Remote.Middleware
+namespace Dvelop.Remote.Middlewares
 {
     public class RequestLoggingMiddleware
     {

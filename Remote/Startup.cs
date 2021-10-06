@@ -10,7 +10,7 @@ using Dvelop.Sdk.TenantMiddleware;
 using Dvelop.Domain.Repositories;
 using Dvelop.Remote.Constraints;
 using Dvelop.Remote.Filter;
-using Dvelop.Remote.Middleware;
+using Dvelop.Remote.Middlewares;
 using Dvelop.Sdk.IdentityProvider.Client;
 using Dvelop.Sdk.IdentityProvider.Middleware;
 
