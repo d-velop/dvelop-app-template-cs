@@ -2,7 +2,7 @@
 resource "aws_cloudwatch_log_metric_filter" "error_log_metric_filter" {
   count          = length(var.lambda_function_names)
   name           = "${element(var.lambda_function_names, count.index)} error messages"
-  pattern        = "?ERROR ?\"[Error]\" ?error ?EXCEPTION ?Exception ?exception ?FATAL ?\"[Fatal]\" ?fatal"
+  pattern        = "{$.sev >= 17}"
   log_group_name = "/aws/lambda/${element(var.lambda_function_names, count.index)}"
 
   metric_transformation {

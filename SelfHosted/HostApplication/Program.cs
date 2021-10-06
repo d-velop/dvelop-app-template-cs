@@ -1,4 +1,5 @@
 using Dvelop.Remote;
+using Dvelop.Sdk.Logging.OtelJsonConsole.Extension;
 using Dvelop.Selfhosted.HostApplication.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -28,6 +29,7 @@ namespace Dvelop.Selfhosted.HostApplication
                     {
                         loggingBuilder.ClearProviders();
                         loggingBuilder.AddConsole();
+                        // loggingBuilder.AddOtelJsonConsole();
                     })
                     .UseStartup<Startup>();
             }).UseServiceProviderFactory(new EnvironmentAwareServiceProviderFactory(new SelfHostedServiceProviderFactory()));

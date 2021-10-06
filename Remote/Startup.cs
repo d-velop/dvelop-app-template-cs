@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -9,6 +10,7 @@ using Dvelop.Sdk.TenantMiddleware;
 using Dvelop.Domain.Repositories;
 using Dvelop.Remote.Constraints;
 using Dvelop.Remote.Filter;
+using Dvelop.Remote.Middleware;
 using Dvelop.Sdk.IdentityProvider.Client;
 using Dvelop.Sdk.IdentityProvider.Middleware;
 
@@ -45,7 +47,10 @@ namespace Dvelop.Remote
 
             Configuration["APP_NAME"] = Configuration["APP_NAME"]??"acme-apptemplatecs";
             Configuration["BASE"] = $"/{Configuration["APP_NAME"]}";
+         
             
+            Activity.DefaultIdFormat = ActivityIdFormat.W3C;
+            Activity.ForceDefaultIdFormat = true;
         }
 
         
@@ -188,6 +193,8 @@ namespace Dvelop.Remote
                     
                 }
             });
+            
+            
 
             if (env.IsDevelopment())
             {
@@ -203,6 +210,20 @@ namespace Dvelop.Remote
 
             app.Use(async (httpContext, next) =>
             {
+                if (Activity.Current == null)
+                {
+                    var activity = new Activity("");
+ 
+                    if (httpContext.Request.Headers.TryGetValue("traceparent", out var traceparent) && traceparent.Count >= 1)
+                    {
+                        activity.SetParentId(traceparent[0]);
+                    }
+ 
+                    activity.Start();
+                    Activity.Current = activity;
+                }
+                
+                
                 // Vary Header determines which additional header fields should be used
                 // to decide if a request can be answered from a cache
                 // cf. https://tools.ietf.org/html/rfc7234#section-4.1
@@ -212,7 +233,7 @@ namespace Dvelop.Remote
                 logger.LogDebug($"{httpContext.Request.Method} ->  {httpContext.Request.Path}" );
                 await next.Invoke().ConfigureAwait(false);
             });
-            
+            app.UseMiddleware<RequestLoggingMiddleware>();
             app.UseCookiePolicy();
             
             app.UseRequestLocalization(new RequestLocalizationOptions
