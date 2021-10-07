@@ -62,6 +62,8 @@ namespace Dvelop.Remote
             
             // Add Filter for DvSignature
             services.AddScoped<Dv1HmacSha256SignatureFilter>();
+            
+            // Asset Localisator
             services.AddSingleton<IAssetLocator, AssetLocator>();
             
             // ResourceInformation for Logging
