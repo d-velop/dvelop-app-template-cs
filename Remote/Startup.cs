@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -7,11 +8,13 @@ using System.Net.Http;
 using System.Text.Json;
 using Dvelop.Sdk.TenantMiddleware;
 using Dvelop.Domain.Repositories;
+using Dvelop.Plugins.WebApi;
 using Dvelop.Remote.Constraints;
 using Dvelop.Remote.Filter;
+using Dvelop.Remote.Middlewares;
 using Dvelop.Sdk.IdentityProvider.Client;
 using Dvelop.Sdk.IdentityProvider.Middleware;
-
+using Dvelop.Sdk.Logging.Abstractions.Resource;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -45,7 +48,10 @@ namespace Dvelop.Remote
 
             Configuration["APP_NAME"] = Configuration["APP_NAME"]??"acme-apptemplatecs";
             Configuration["BASE"] = $"/{Configuration["APP_NAME"]}";
+         
             
+            Activity.DefaultIdFormat = ActivityIdFormat.W3C;
+            Activity.ForceDefaultIdFormat = true;
         }
 
         
@@ -56,10 +62,17 @@ namespace Dvelop.Remote
             
             // Add Filter for DvSignature
             services.AddScoped<Dv1HmacSha256SignatureFilter>();
+            
+            // Asset Localisator
             services.AddSingleton<IAssetLocator, AssetLocator>();
+            
+            // ResourceInformation for Logging
+            services.AddSingleton<IResourceDescriptor, WebApiResourceDescriptor>();
+            
             // Allow Classes to access the HttpContext
             services.AddHttpContextAccessor();
             services.TryAddEnumerable(ServiceDescriptor.Singleton<MatcherPolicy, ProducesMatcherPolicy>());
+            
             // Enable d.ecs IdentityProvider
             services.AddAuthentication(options =>
             {
@@ -105,7 +118,13 @@ namespace Dvelop.Remote
                 })*/
                 
             services.AddDirectoryBrowser();
-            services.AddLogging(loggingBuilder => loggingBuilder.SetMinimumLevel(LogLevel.Information));
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder
+                    .SetMinimumLevel(LogLevel.Debug)
+                    .AddFilter("Microsoft", LogLevel.Warning)
+                    .AddFilter("Microsoft.AspNetCore", LogLevel.Warning);
+            });
             services.AddRouting(routeOptions => routeOptions.AppendTrailingSlash = true );
         }
 
@@ -188,6 +207,8 @@ namespace Dvelop.Remote
                     
                 }
             });
+            
+            
 
             if (env.IsDevelopment())
             {
@@ -203,6 +224,20 @@ namespace Dvelop.Remote
 
             app.Use(async (httpContext, next) =>
             {
+                if (Activity.Current == null)
+                {
+                    var activity = new Activity("");
+ 
+                    if (httpContext.Request.Headers.TryGetValue("traceparent", out var traceparent) && traceparent.Count >= 1)
+                    {
+                        activity.SetParentId(traceparent[0]);
+                    }
+ 
+                    activity.Start();
+                    Activity.Current = activity;
+                }
+                
+                
                 // Vary Header determines which additional header fields should be used
                 // to decide if a request can be answered from a cache
                 // cf. https://tools.ietf.org/html/rfc7234#section-4.1
@@ -212,7 +247,7 @@ namespace Dvelop.Remote
                 logger.LogDebug($"{httpContext.Request.Method} ->  {httpContext.Request.Path}" );
                 await next.Invoke().ConfigureAwait(false);
             });
-            
+            app.UseMiddleware<RequestLoggingMiddleware>();
             app.UseCookiePolicy();
             
             app.UseRequestLocalization(new RequestLocalizationOptions

@@ -1,7 +1,7 @@
 ﻿using Dvelop.Domain.Repositories;
 using Microsoft.Extensions.Configuration;
 
-namespace Dvelop.Remote
+namespace Dvelop.Plugins.WebApi
 {
     public class AssetLocator: IAssetLocator
     {

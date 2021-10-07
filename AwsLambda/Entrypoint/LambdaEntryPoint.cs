@@ -2,6 +2,7 @@ using System;
 using Amazon.Lambda.Core;
 using Dvelop.Lambda.EntryPoint.DependencyInjection;
 using Dvelop.Remote;
+using Dvelop.Sdk.Logging.OtelJsonConsole.Extension;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -51,10 +52,7 @@ namespace Dvelop.Lambda.EntryPoint
                     .ConfigureLogging((hostingContext, loggingBuilder) =>
                     {
                         loggingBuilder.ClearProviders();
-                        loggingBuilder.AddLambdaLogger(new LambdaLoggerOptions
-                        {
-                            IncludeException = true
-                        });
+                        loggingBuilder.AddOtelJsonConsole(c => c.IncludeScopes=false);
                         loggingBuilder.SetMinimumLevel(LogLevel.Debug);
                         loggingBuilder.AddFilter("Default", LogLevel.Debug);
                         loggingBuilder.AddFilter("System", LogLevel.Information);
