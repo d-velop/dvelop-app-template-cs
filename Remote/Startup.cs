@@ -13,7 +13,7 @@ using Dvelop.Remote.Filter;
 using Dvelop.Remote.Middlewares;
 using Dvelop.Sdk.IdentityProvider.Client;
 using Dvelop.Sdk.IdentityProvider.Middleware;
-
+using Dvelop.Sdk.Logging.Abstractions.Resource;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -62,9 +62,14 @@ namespace Dvelop.Remote
             // Add Filter for DvSignature
             services.AddScoped<Dv1HmacSha256SignatureFilter>();
             services.AddSingleton<IAssetLocator, AssetLocator>();
+            
+            // ResourceInformation for Logging
+            services.AddSingleton<IResourceDescriptor, WebApiResourceDescriptor>();
+            
             // Allow Classes to access the HttpContext
             services.AddHttpContextAccessor();
             services.TryAddEnumerable(ServiceDescriptor.Singleton<MatcherPolicy, ProducesMatcherPolicy>());
+            
             // Enable d.ecs IdentityProvider
             services.AddAuthentication(options =>
             {
