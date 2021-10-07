@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	
 	<ItemGroup>
-	  <PackageReference Include="Dvelop.Sdk.Logging.OtelJsonConsole" Version="0.0.6.117-prerelease" />
+	  <PackageReference Include="Dvelop.Sdk.Logging.OtelJsonConsole" Version="0.0.6.118" />
 	</ItemGroup>
 	
 	<ItemGroup>
