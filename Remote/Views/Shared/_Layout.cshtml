@@ -13,12 +13,18 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     <link rel="stylesheet" href="https://unpkg.com/material-components-web@3.0.0/dist/material-components-web.min.css">
     <script src="https://unpkg.com/material-components-web@3.0.0/dist/material-components-web.min.js"></script>
-    <link rel="stylesheet" href="@_assetLocator.GetAssetsPath()/@ViewData["Css"]" />
+    @if (!string.IsNullOrEmpty(ViewData["Css"] as string))
+    {
+        <link rel="stylesheet" href="@_assetLocator.GetAssetsPath()/@ViewData["Css"]" />
+    }
 </head>
 
 <body class="mdc-typography" data-mode="@ViewData["DataMode"]">
     @RenderBody()
-    <script async src="@_assetLocator.GetAssetsPath()/@ViewData["Js"]"></script>
+    @if (!string.IsNullOrEmpty(ViewData["Js"] as string))
+    {
+        <script async src="@_assetLocator.GetAssetsPath()/@ViewData["Js"]"></script>
+    }
     <!--<script type="text/javascript" src="@_assetLocator.GetAssetsPath()/dvelop-dapi/scripts/dapi.js"></script>-->
 </body>
 </html>
