@@ -110,7 +110,13 @@ namespace Dvelop.Remote
                 })*/
                 
             services.AddDirectoryBrowser();
-            services.AddLogging(loggingBuilder => loggingBuilder.SetMinimumLevel(LogLevel.Information));
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder
+                    .SetMinimumLevel(LogLevel.Debug)
+                    .AddFilter("Microsoft", LogLevel.Warning)
+                    .AddFilter("Microsoft.AspNetCore", LogLevel.Warning);
+            });
             services.AddRouting(routeOptions => routeOptions.AppendTrailingSlash = true );
         }
 

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 
 namespace Dvelop.Selfhosted.HostApplication
 {
@@ -28,7 +29,11 @@ namespace Dvelop.Selfhosted.HostApplication
                     .ConfigureLogging(loggingBuilder =>
                     {
                         loggingBuilder.ClearProviders();
-                        loggingBuilder.AddConsole();
+                        loggingBuilder.AddSimpleConsole(options=>
+                        {
+                            options.SingleLine = true;
+                            options.ColorBehavior = LoggerColorBehavior.Disabled;
+                        });
                         // loggingBuilder.AddOtelJsonConsole();
                     })
                     .UseStartup<Startup>();
