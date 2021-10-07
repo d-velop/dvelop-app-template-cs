@@ -3,7 +3,7 @@ using Dvelop.Domain.VersionService;
 using Dvelop.Sdk.Logging.Abstractions.Resource;
 using Microsoft.Extensions.Configuration;
 
-namespace Dvelop.Remote
+namespace Dvelop.Plugins.WebApi
 {
     public class WebApiResourceDescriptor: IResourceDescriptor
     {
