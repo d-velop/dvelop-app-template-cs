@@ -9,7 +9,7 @@
     <ItemGroup>
       <PackageReference Include="Dvelop.Sdk.Logging.Abstractions" Version="0.0.6.118" />
       <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
     </ItemGroup>
 
     <ItemGroup>

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 [assembly:LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
 namespace Dvelop.Lambda.EntryPoint
@@ -30,7 +31,7 @@ namespace Dvelop.Lambda.EntryPoint
         // 
         // Note: When using the AWS::Serverless::Function resource with an event type of "HttpApi" then payload version 2.0
         // will be the default and you must make Amazon.Lambda.AspNetCoreServer.APIGatewayHttpApiV2ProxyFunction the base class.
-        Amazon.Lambda.AspNetCoreServer.APIGatewayProxyFunction
+        Amazon.Lambda.AspNetCoreServer.APIGatewayHttpApiV2ProxyFunction
     {
         /// <summary>
         /// 
