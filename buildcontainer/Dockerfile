@@ -21,8 +21,8 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1
 
 ENV TERRAFORM_VERSION 1.0.5
 ENV TERRAFORM_CHECKSUM 7ce24478859ab7ca0ba4d8c9c12bb345f52e8efdc42fa3ef9dd30033dbf4b561
-ENV TERRAFORM_AWS_PLUGIN_VERSION 3.75.1
-ENV TERRAFORM_AWS_PLUGIN_CHECKSUM ecd664c0d664fcf2d8a89a01462cb00bcae37da200305aef2de1b8fe185c9cd8
+ENV TERRAFORM_AWS_PLUGIN_VERSION 4.8.0
+ENV TERRAFORM_AWS_PLUGIN_CHECKSUM 5758cbb813091db8573f27bba37c48f63ba95f2104f3bc49f13131e3c305b848
 ENV TERRAFORM_TEMPLATE_PLUGIN_VERSION 2.2.0
 ENV TERRAFORM_TEMPLATE_PLUGIN_CHECKSUM 8a154388f3708e3df5a69122a23bdfaf760a523788a5081976b3d5616f7d30ae
 ENV TERRAFORM_TERRAFORM_PLUGIN_VERSION 2.2.0
@@ -34,7 +34,7 @@ ENV PACKER_CHECKSUM bc58aa3f3db380b76776e35f69662b49f3cf15cf80420fc81a15ce971430
 
 #create terraforms default local provider structure
 RUN mkdir -p ~/.terraform.d ~/.terraform.d/plugins -p ~/.terraform.d/plugins/registry.terraform.io/ ~/.terraform.d/plugins/registry.terraform.io/hashicorp/ && \
-    mkdir -p ~/.terraform.d/plugins/registry.terraform.io/hashicorp/aws && \ 
+    mkdir -p ~/.terraform.d/plugins/registry.terraform.io/hashicorp/aws && \
     mkdir -p ~/.terraform.d/plugins/registry.terraform.io/hashicorp/template && \
     mkdir -p ~/.terraform.d/plugins/registry.terraform.io/hashicorp/archive && \
     cd ~/.terraform.d/plugins/registry.terraform.io/hashicorp/ && \
