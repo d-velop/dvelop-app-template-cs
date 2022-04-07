@@ -16,6 +16,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<StartupObject>Dvelop.Selfhosted.HostApplication.Program</StartupObject>
 		<RootNamespace>Dvelop.Selfhosted.HostApplication</RootNamespace>
+		<Nullable>disable</Nullable>
 	</PropertyGroup>
   
 

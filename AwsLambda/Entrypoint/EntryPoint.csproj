@@ -8,6 +8,7 @@
     <StartupObject />
     <RootNamespace>Dvelop.Lambda.EntryPoint</RootNamespace>
     <AssemblyName>EntryPoint</AssemblyName>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
   <ItemGroup>
 	<PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="7.1.0" />

@@ -48,6 +48,7 @@
 		<OutputType>Library</OutputType>
 		<RootNamespace>Dvelop.Remote</RootNamespace>
 		<TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
+		<Nullable>disable</Nullable>
 	</PropertyGroup>
   
 </Project>

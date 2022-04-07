@@ -1,16 +1,15 @@
-using System;
 using Amazon.Lambda.Core;
+using Amazon.Lambda.Serialization.SystemTextJson;
 using Dvelop.Lambda.EntryPoint.DependencyInjection;
 using Dvelop.Remote;
 using Dvelop.Sdk.Logging.OtelJsonConsole.Extension;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
-
-[assembly:LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
+[assembly: LambdaSerializer(typeof(SourceGeneratorLambdaJsonSerializer<Dvelop.Lambda.EntryPoint.HttpApiJsonSerializerContext>))]
+//[assembly:LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
 namespace Dvelop.Lambda.EntryPoint
 {
     /// <summary>
@@ -31,7 +30,7 @@ namespace Dvelop.Lambda.EntryPoint
         // 
         // Note: When using the AWS::Serverless::Function resource with an event type of "HttpApi" then payload version 2.0
         // will be the default and you must make Amazon.Lambda.AspNetCoreServer.APIGatewayHttpApiV2ProxyFunction the base class.
-        Amazon.Lambda.AspNetCoreServer.APIGatewayHttpApiV2ProxyFunction
+        Amazon.Lambda.AspNetCoreServer.APIGatewayProxyFunction
     {
         /// <summary>
         /// 
