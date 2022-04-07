@@ -1,15 +1,15 @@
-using System;
 using Amazon.Lambda.Core;
+using Amazon.Lambda.Serialization.SystemTextJson;
 using Dvelop.Lambda.EntryPoint.DependencyInjection;
 using Dvelop.Remote;
 using Dvelop.Sdk.Logging.OtelJsonConsole.Extension;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
-[assembly:LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
+[assembly: LambdaSerializer(typeof(SourceGeneratorLambdaJsonSerializer<Dvelop.Lambda.EntryPoint.HttpApiJsonSerializerContext>))]
+//[assembly:LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
 namespace Dvelop.Lambda.EntryPoint
 {
     /// <summary>

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Dvelop.Sdk.TenantMiddleware;
 using Dvelop.Domain.Repositories;
 using Dvelop.Plugins.WebApi;
@@ -100,14 +101,16 @@ namespace Dvelop.Remote
                 {
                     options.Conventions.AllowAnonymousToPage("/Error");
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                //.SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddJsonOptions(options =>
                 {
-                    options.JsonSerializerOptions.IgnoreNullValues = true;
+                    //options.JsonSerializerOptions.IgnoreNullValues = true;
                     options.JsonSerializerOptions.WriteIndented = true;
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                 });
+            
                 /* If you want to switch back to NewtonSoftJson, use to following settings
                 .AddNewtonsoftJson(options =>
                 {

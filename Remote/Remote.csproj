@@ -3,7 +3,7 @@
 	 <ItemGroup>
 			<PackageReference Include="Dvelop.Sdk.Base.Dto" Version="0.0.6.118" />
 			<PackageReference Include="Dvelop.Sdk.CloudCenter.Dto" Version="0.0.6.118" />
-			<PackageReference Include="Dvelop.Sdk.Config.Dto" Version="0.0.6.117-prerelease" />
+			<PackageReference Include="Dvelop.Sdk.Config.Dto" Version="0.0.6.118" />
 			<PackageReference Include="Dvelop.Sdk.Home.Dto" Version="0.0.6.118" />
 			<PackageReference Include="Dvelop.Sdk.IdentityProvider.Middleware" Version="0.0.6.118" />
 			<PackageReference Include="Dvelop.Sdk.Logging.Abstractions" Version="0.0.6.118" />
@@ -43,11 +43,12 @@
 	 </ItemGroup>
 
 	<PropertyGroup>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<TargetFramework>net6.0</TargetFramework>
 		<ApplicationIcon />
 		<OutputType>Library</OutputType>
 		<RootNamespace>Dvelop.Remote</RootNamespace>
 		<TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
+		<Nullable>disable</Nullable>
 	</PropertyGroup>
   
 </Project>

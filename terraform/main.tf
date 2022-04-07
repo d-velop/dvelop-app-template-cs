@@ -1,5 +1,5 @@
 locals {
-  assets_bucket_name = "assets.${var.system_prefix}${var.appname}${var.domainsuffix}"
+  assets_bucket_name = "${var.system_prefix}${var.appname}-assets"
 
   lambda_file      = "../dist/lambda.zip"
   source_code_hash = filebase64sha256(local.lambda_file)
@@ -30,7 +30,7 @@ module "serverless_lambda_app" {
   # If you change your output file names or namespaces, you will have to edit the next line
   # <binary>::<name-space>.<class>::<function>
   lambda_handler     = "EntryPoint::Dvelop.Lambda.EntryPoint.LambdaEntryPoint::FunctionHandlerAsync"
-  lambda_runtime     = "dotnetcore3.1"
+  lambda_runtime     = "dotnet6"
   assets_bucket_name = local.assets_bucket_name
 
   # Which rights should the lambda function have.
@@ -45,7 +45,7 @@ module "serverless_lambda_app" {
     BUILD_VERSION    = local.build_version
     # change following entries if asset_cdn is enabled
     #ASSET_BASE_PATH  = "https://${module.asset_cdn.dns_name}/${var.asset_hash}"
-    ASSET_BASE_PATH = "https://s3-eu-central-1.amazonaws.com/${local.assets_bucket_name}/${var.asset_hash}"
+    ASSET_BASE_PATH = "https://${local.assets_bucket_name}.s3-eu-central-1.amazonaws.com/${var.asset_hash}"
   }
 
   aws_region = var.aws_region
@@ -55,7 +55,7 @@ module "serverless_lambda_app" {
 # If you use cloudfront (a CDN) to deliver your assets, you should remember to remove  's3-eu-central-1.amazonaws.com/' from this output. 
 # Otherwise the deployment will show a different configuration than used.
 output "asset_base_path" {
-  value = "https://s3-eu-central-1.amazonaws.com/${local.assets_bucket_name}/${var.asset_hash}"
+  value = "https://${local.assets_bucket_name}.amazonaws.com/${var.asset_hash}"
 }
 
 # Uncomment if you want to use cloudfront (a CDN) to deliver your assets OR custom domain names for your API endpoints.
