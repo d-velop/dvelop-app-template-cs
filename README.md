@@ -13,10 +13,10 @@ After this adjust the code to fit the purpose of your own business problem/app.
 ### Prerequisites
 
 A linux docker container is used for the build and deployment process of the app.
-So besides docker the only thing you need on your local development system is a 
+So besides docker the only thing you need on your local development system is a
 git client and an editor or IDE for C#.
 
-To develop a d.velop cloud app you will need to install [.NET Core SDK 6.0](https://dotnet.microsoft.com/download/dotnet-core/6.0). Newer versions of the SDK will also work, but keep in mind, that AWS Lambda will only [support LTS versions](https://github.com/aws/aws-lambda-dotnet) of `.NET Core`. 
+To develop a d.velop cloud app you will need to install [.NET Core SDK 6.0](https://dotnet.microsoft.com/download/dotnet-core/6.0). Newer versions of the SDK will also work, but keep in mind, that AWS Lambda will only [support LTS versions](https://github.com/aws/aws-lambda-dotnet) of `.NET Core`.
 
 If you use Microsoft Visual Studio you will need "ASP.NET and web development", ".NET desktop development" and ".NET Core cross-platform development" workloads installed.
 
@@ -55,11 +55,11 @@ The prefix can be selected during the registration process in d.velop cloud.
 If you choose a provider prefix which corresponds to your company name or an abbreviation of the company name
 it's very likely that it is available when you later register your app in d.velop cloud.
 
-For example if your company is named *Super Duper Software Limited* and the domain of your app 
+For example if your company is named *Super Duper Software Limited* and the domain of your app
 is *employees applying for vacation* your app should be named
-something like `superduperltd-vacationprocess`App. Note that the `App` suffix isn't used in the configuration files. 
+something like `superduperltd-vacationprocess`App. Note that the `App` suffix isn't used in the configuration files.
 
-Apps belonging to the core d.velop cloud platform don't have a provider prefix. 
+Apps belonging to the core d.velop cloud platform don't have a provider prefix.
 
 Use the `rename` target to rename your app:
 
@@ -80,12 +80,12 @@ redeployment of the AWS resources which takes some time.**
 **Please read [Rename the app](#rename-the-app) before you proceed with the deployment.**
 
 You need an AWS Account to deploy your app. At the time of writing some of the AWS services are
-free to use for a limited amount of time and workload. 
+free to use for a limited amount of time and workload.
 Check the [Free Tier](https://aws.amazon.com/free/) offering from AWS for the current conditions.
 
 Manually create an IAM user with
-the appropriate rights to create the AWS resources defined by your terraform configuration. 
-You could start with a user who has the `arn:aws:iam::aws:policy/AdministratorAccess` policy to start quickly, 
+the appropriate rights to create the AWS resources defined by your terraform configuration.
+You could start with a user who has the `arn:aws:iam::aws:policy/AdministratorAccess` policy to start quickly,
 but you **should definitely restrict the rights of that IAM user to a minimum as soon as you go into production**.
 
 Configure your AWS credentials by using one of the methods described in
@@ -106,12 +106,12 @@ export AWS_ACCESS_KEY_ID=<YOUR-ACCESS-KEY-ID>
 export AWS_SECRET_ACCESS_KEY=<YOUR-SECRET-ACCESS-KEY>
 ```
 
-:warning: Please ensure, that these secrets are **never** available in any public repository. 
+:warning: Please ensure, that these secrets are **never** available in any public repository.
 
-The `environment` must not contain any secrets or set environmet variables itself. 
+The `environment` must not contain any secrets or set environmet variables itself.
 
-This file contains a list of keys for environmentvariables, which should be made available 
-within the docker-Container. The variables are copied into the container by the 
+This file contains a list of keys for environmentvariables, which should be made available
+within the docker-Container. The variables are copied into the container by the
 [docker-build.bat](docker-build.bat#L9) and [docker-build.sh](docker-build.sh#L8) scripts.
 
 Deploy the lambda function and all other AWS Ressources like AWS API Gateway.
@@ -128,8 +128,8 @@ between deployments) and will be much quicker.
 
 ### Test your endpoint
 
-The endpoint URLs are logged at the end of the deployment. Just invoke them in a browser to test your app.  
- 
+The endpoint URLs are logged at the end of the deployment. Just invoke them in a browser to test your app.
+
 ```
 Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
 
@@ -145,7 +145,7 @@ endpoint = [
 To watch the current deployment state you can invoke
 
 ```
-docker-build show 
+docker-build show
 ```
 
 at any time without changing your deployment.
@@ -164,7 +164,7 @@ for your hosted zone works before you use these modules**. Read the comments in 
 This module uses *aws cloudfront* as a CDN for your static assets. Furthermore it allows you to define
 a custom domain for your assets instead of the s3 URL. Your deployment should work perfectly without this module.
 
-#### api_custom_domain 
+#### api_custom_domain
 This module allows you to define a custom domain for your app endpoints. A custom domain name is required
 as soon as you register your app in the d.velop cloud center because the base path of your app must
 begin with the name of your app. So instead of the default endpoints
@@ -211,7 +211,7 @@ There are two *different* implementations for this interface. One for AWS-lambda
 
 #### `AwsLambda/EntryPoint`
 
-Contains the EntryPoint for AWS-Lambda. This project will be used to bootstrap your AWS-Lambda application. 
+Contains the EntryPoint for AWS-Lambda. This project will be used to bootstrap your AWS-Lambda application.
 
 You can add AWS-lambda specific ASP.NET Core settings in [LambdaEntryPoint.cs](AwsLambda/EntryPoint/LambdaEntryPoint.cs)
 
@@ -243,10 +243,10 @@ All WebApi-Controller are stored within `Controller`. The DTOs and ViewModel-cla
 
 In this Folder are several projects to implement the interfaces defined by the `Domain` project.
 
-You can separate different implementation for AWS lambda and a self-hosted environment by creating more than one project. 
+You can separate different implementation for AWS lambda and a self-hosted environment by creating more than one project.
 
-Example: 
-AWS lambda uses a [DynamoDb (Fake)](Plugins/DynamoDbFake/DynamoDbVacationRepository.cs) to implement [IVacationRepository.cs](Domain/Vacation/IVacationRepository.cs). 
+Example:
+AWS lambda uses a [DynamoDb (Fake)](Plugins/DynamoDbFake/DynamoDbVacationRepository.cs) to implement [IVacationRepository.cs](Domain/Vacation/IVacationRepository.cs).
 
 The self hosted environment has no persistence and uses a [InMemoryDb](Plugins/InMemoryDb/InMemoryVacationRepository.cs) for testing.
 
@@ -270,4 +270,4 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 
 Please read [LICENSE](LICENSE) for licensing information.
 
-[![Build Status](https://travis-ci.com/d-velop/dvelop-app-template-cs.svg?branch=master)](https://travis-ci.com/d-velop/dvelop-app-template-cs)
+[![Build Status](https://travis-ci.com/d-velop/dvelop-app-template-cs.svg?branch=main)](https://travis-ci.com/d-velop/dvelop-app-template-cs)
